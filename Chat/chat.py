@@ -1,6 +1,8 @@
 ﻿import openai
 import os
 
+# Chat GPT 3.5 Turboモードで作成。
+
 # APIキーを設定
 openai.api_key = os.environ['OPENAI_API_KEY']
 
