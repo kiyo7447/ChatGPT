@@ -1,0 +1,45 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ output extension=".txt" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    var name = "John Doe";
+    var age = 28;
+    var city = "San Francisco";
+#>
+Hello, my name is <#= name #>.
+I am <#=age #> years old and I live in <#= city #>.
+<#
+    for(int i = 0; i < 4; i++)
+    {
+        Write(i + ", ");
+    }
+    Write("4");
+#> Hello!
+
+
+<#
+    for(int i = 0; i < 4; i++)
+    {
+#>
+Hello!
+<#
+    }
+#>
+
+<#= 2 + 3 #>
+
+<#
+    for(int i = 0; i < 4; i++)
+    {
+#>
+This is hello number <#= i+1 #>: Hello!
+<#
+    }
+#>
+aaa
+fdsfds
+
+2222

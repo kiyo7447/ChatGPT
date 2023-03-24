@@ -1,0 +1,26 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ output extension=".txt" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="ReceiptFormatterT4" #>
+<#@ parameter name="Persons" type="System.Collections.Generic.List<Person>" #>
+
+
+<# foreach (var person in Persons) { #>
+<#= person.FirstName #> <#= person.LastName #>
+<# } #>
+
+
+<#
+    var name = "John Doe";
+    var age = 28;
+    var city = "San Francisco";
+#>
+Hello, my name is <#= name #>.
+I am <#=age #> years old and I live in <#= city #>.
+
+2222
+
