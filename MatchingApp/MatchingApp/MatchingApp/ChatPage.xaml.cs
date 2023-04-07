@@ -15,7 +15,18 @@ public partial class ChatPage : ContentPage
     {
         InitializeComponent();
         MessagesListView.ItemsSource = Messages;
+
+
+        // MessageEntryのTextChangedイベントにハンドラを追加
+        MessageEntry.TextChanged += MessageEntry_TextChanged;
     }
+
+    // MessageEntry_TextChangedメソッドを追加
+    private void MessageEntry_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        SendButton.IsEnabled = !string.IsNullOrEmpty(e.NewTextValue);
+    }
+
 
     [Obsolete]
 

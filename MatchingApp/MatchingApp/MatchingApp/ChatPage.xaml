@@ -41,7 +41,7 @@
             <Entry x:Name="UsernameEntry" />
             <Label Text="入力メッセージ：" />
             <Entry x:Name="MessageEntry" />
-            <Button x:Name="SendButton" Text="　送　信　" Clicked="SendButton_Clicked" />
+            <Button x:Name="SendButton" Text="　送　信　" Clicked="SendButton_Clicked" IsEnabled="False"/>
         </StackLayout>
     </Grid>
 </ContentPage>
