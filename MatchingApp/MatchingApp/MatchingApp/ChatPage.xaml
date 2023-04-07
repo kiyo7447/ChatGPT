@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MatchingApp.ChatPage"
+             Title="ChatPage">
+
+
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackLayout Grid.Row="0">
+            <Label x:Name="ConnectedUsersLabel" Text="人数：0人" />
+            <Label Text="メッセージ：" />
+        </StackLayout>
+        <ListView x:Name="MessagesListView" Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal">
+                            <Label Text="{Binding Username}"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Start" />
+                            <Label Text="："
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Start" />
+
+                            <Label Text="{Binding MessageContent}"
+                                   HorizontalOptions="FillAndExpand" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <StackLayout Margin="20" Grid.Row="2">
+            <Label Text="ユーザ名：" />
+            <Entry x:Name="UsernameEntry" />
+            <Label Text="入力メッセージ：" />
+            <Entry x:Name="MessageEntry" />
+            <Button x:Name="SendButton" Text="　送　信　" Clicked="SendButton_Clicked" />
+        </StackLayout>
+    </Grid>
+</ContentPage>
