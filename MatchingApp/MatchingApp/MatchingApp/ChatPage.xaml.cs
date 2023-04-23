@@ -77,6 +77,13 @@ public partial class ChatPage : ContentPage
         // ユーザ名をPreferencesに保存します。
         Preferences.Set("Username", username);
 
+        //メッセージが入力されていない場合は何もしない。
+        if (string.IsNullOrEmpty(message))
+        {
+            return;
+        }
+
+
         await _hubConnection.SendAsync("SendMessage", username, message);
         MessageEntry.Text = string.Empty;
     }
