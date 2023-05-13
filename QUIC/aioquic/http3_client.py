@@ -1,3 +1,4 @@
+# 必要なライブラリとモジュールをインポートします
 import argparse
 import asyncio
 import logging
@@ -27,18 +28,21 @@ from aioquic.quic.events import QuicEvent
 from aioquic.quic.logger import QuicFileLogger
 from aioquic.tls import CipherSuite, SessionTicket
 
+# uvloopがインストールされているか試みます。なければuvloopはNoneとなります
 try:
     import uvloop
 except ImportError:
     uvloop = None
 
+# ロガーを設定します
 logger = logging.getLogger("client")
 
 HttpConnection = Union[H0Connection, H3Connection]
 
+# ユーザーエージェントを設定します
 USER_AGENT = "aioquic/" + aioquic.__version__
 
-
+# URLクラスを定義します
 class URL:
     def __init__(self, url: str) -> None:
         parsed = urlparse(url)
@@ -49,7 +53,7 @@ class URL:
             self.full_path += "?" + parsed.query
         self.scheme = parsed.scheme
 
-
+# HttpRequestクラスを定義します
 class HttpRequest:
     def __init__(
         self,
@@ -66,7 +70,7 @@ class HttpRequest:
         self.method = method
         self.url = url
 
-
+# WebSocketクラスを定義します
 class WebSocket:
     def __init__(
         self, http: HttpConnection, stream_id: int, transmit: Callable[[], None]
@@ -78,6 +82,7 @@ class WebSocket:
         self.transmit = transmit
         self.websocket = wsproto.Connection(wsproto.ConnectionType.CLIENT)
 
+    # クローズハンドシェイクを行うメソッドを定義します
     async def close(self, code: int = 1000, reason: str = "") -> None:
         """
         Perform the closing handshake.
@@ -88,12 +93,14 @@ class WebSocket:
         self.http.send_data(stream_id=self.stream_id, data=data, end_stream=True)
         self.transmit()
 
+    # 次のメッセージを受信するメソッドを定義します
     async def recv(self) -> str:
         """
         Receive the next message.
         """
         return await self.queue.get()
 
+    # メッセージを送信するメソッドを定義します
     async def send(self, message: str) -> None:
         """
         Send a message.
@@ -104,6 +111,7 @@ class WebSocket:
         self.http.send_data(stream_id=self.stream_id, data=data, end_stream=False)
         self.transmit()
 
+    # HTTPイベントを受け取った際のメソッドを定義します
     def http_event_received(self, event: H3Event) -> None:
         if isinstance(event, HeadersReceived):
             for header, value in event.headers:
@@ -115,11 +123,12 @@ class WebSocket:
         for ws_event in self.websocket.events():
             self.websocket_event_received(ws_event)
 
+    # WebSocketイベントを受け取った際のメソッドを定義します
     def websocket_event_received(self, event: wsproto.events.Event) -> None:
         if isinstance(event, wsproto.events.TextMessage):
             self.queue.put_nowait(event.data)
 
-
+# HttpClientクラスを定義します
 class HttpClient(QuicConnectionProtocol):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -135,6 +144,7 @@ class HttpClient(QuicConnectionProtocol):
         else:
             self._http = H3Connection(self._quic)
 
+    # GETリクエストを行うメソッドを定義します
     async def get(self, url: str, headers: Optional[Dict] = None) -> Deque[H3Event]:
         """
         Perform a GET request.
@@ -143,6 +153,7 @@ class HttpClient(QuicConnectionProtocol):
             HttpRequest(method="GET", url=URL(url), headers=headers)
         )
 
+    # POSTリクエストを行うメソッドを定義します
     async def post(
         self, url: str, data: bytes, headers: Optional[Dict] = None
     ) -> Deque[H3Event]:
@@ -153,6 +164,7 @@ class HttpClient(QuicConnectionProtocol):
             HttpRequest(method="POST", url=URL(url), content=data, headers=headers)
         )
 
+    # WebSocketを開くメソッドを定義します
     async def websocket(
         self, url: str, subprotocols: Optional[List[str]] = None
     ) -> WebSocket:
@@ -176,45 +188,52 @@ class HttpClient(QuicConnectionProtocol):
             (b"user-agent", USER_AGENT.encode()),
             (b"sec-websocket-version", b"13"),
         ]
+        # サブプロトコルが存在する場合は、それをヘッダーに追加します
         if subprotocols:
             headers.append(
                 (b"sec-websocket-protocol", ", ".join(subprotocols).encode())
             )
+        # HTTPリクエストのヘッダーを送信します
         self._http.send_headers(stream_id=stream_id, headers=headers)
 
+        # データを送信します
         self.transmit()
 
+        # WebSocketインスタンスを返します
         return websocket
 
+    # HTTPイベントを受け取った際の処理を定義します
     def http_event_received(self, event: H3Event) -> None:
         if isinstance(event, (HeadersReceived, DataReceived)):
             stream_id = event.stream_id
             if stream_id in self._request_events:
-                # http
+                # HTTPリクエストのイベントを処理します
                 self._request_events[event.stream_id].append(event)
                 if event.stream_ended:
                     request_waiter = self._request_waiter.pop(stream_id)
                     request_waiter.set_result(self._request_events.pop(stream_id))
 
             elif stream_id in self._websockets:
-                # websocket
+                # WebSocketのイベントを処理します
                 websocket = self._websockets[stream_id]
                 websocket.http_event_received(event)
 
             elif event.push_id in self.pushes:
-                # push
+                # Pushのイベントを処理します
                 self.pushes[event.push_id].append(event)
 
         elif isinstance(event, PushPromiseReceived):
             self.pushes[event.push_id] = deque()
             self.pushes[event.push_id].append(event)
 
+    # QUICイベントを受け取った際の処理を定義します
     def quic_event_received(self, event: QuicEvent) -> None:
-        #  pass event to the HTTP layer
+        #  HTTPレイヤーにイベントを渡します
         if self._http is not None:
             for http_event in self._http.handle_event(event):
                 self.http_event_received(http_event)
 
+    # HTTPリクエストを行う内部メソッドを定義します
     async def _request(self, request: HttpRequest) -> Deque[H3Event]:
         stream_id = self._quic.get_next_available_stream_id()
         self._http.send_headers(
@@ -242,17 +261,19 @@ class HttpClient(QuicConnectionProtocol):
         return await asyncio.shield(waiter)
 
 
+# HTTPリクエストを非同期に実行する関数
 async def perform_http_request(
-    client: HttpClient,
-    url: str,
-    data: Optional[str],
-    include: bool,
-    output_dir: Optional[str],
+    client: HttpClient,  # HttpClient インスタンス
+    url: str,  # リクエスト先のURL
+    data: Optional[str],  # POSTリクエストで送信するデータ（必要な場合）
+    include: bool,  # レスポンスヘッダを出力に含めるかどうか
+    output_dir: Optional[str],  # レスポンスを保存するディレクトリ（必要な場合）
 ) -> None:
-    # perform request
+    # リクエストを実行
     start = time.time()
     if data is not None:
         data_bytes = data.encode()
+        # POST メソッドでリクエストを実行
         http_events = await client.post(
             url,
             data=data_bytes,
@@ -263,11 +284,12 @@ async def perform_http_request(
         )
         method = "POST"
     else:
+        # GET メソッドでリクエストを実行
         http_events = await client.get(url)
         method = "GET"
     elapsed = time.time() - start
 
-    # print speed
+    # レスポンス速度を計算して出力
     octets = 0
     for http_event in http_events:
         if isinstance(http_event, DataReceived):
@@ -277,7 +299,7 @@ async def perform_http_request(
         % (method, urlparse(url).path, octets, elapsed, octets * 8 / elapsed / 1000000)
     )
 
-    # output response
+    # レスポンスを出力
     if output_dir is not None:
         output_path = os.path.join(
             output_dir, os.path.basename(urlparse(url).path) or "index.html"
@@ -287,7 +309,8 @@ async def perform_http_request(
                 http_events=http_events, include=include, output_file=output_file
             )
 
-
+# 以下のコードは似たような処理が多く、同じようなコメントが適用されます。
+# しかし、この関数はHTTPのPUSHを処理するためのものです。
 def process_http_pushes(
     client: HttpClient,
     include: bool,
@@ -332,7 +355,7 @@ def write_response(
         elif isinstance(http_event, DataReceived):
             output_file.write(http_event.data)
 
-
+# TLSエンジンから新しいセッションチケットが受け取られたときに呼び出されるコールバック関数
 def save_session_ticket(ticket: SessionTicket) -> None:
     """
     Callback which is invoked by the TLS engine when a new session ticket
@@ -343,7 +366,7 @@ def save_session_ticket(ticket: SessionTicket) -> None:
         with open(args.session_ticket, "wb") as fp:
             pickle.dump(ticket, fp)
 
-
+# メインの非同期関数
 async def main(
     configuration: QuicConfiguration,
     urls: List[str],
@@ -427,10 +450,15 @@ async def main(
         client._quic.close(error_code=ErrorCode.H3_NO_ERROR)
 
 
+# メイン関数が直接呼び出されたときに実行する処理
 if __name__ == "__main__":
+    # QUICのデフォルト設定を取得
     defaults = QuicConfiguration(is_client=True)
 
+    # コマンドライン引数のパーサを作成
     parser = argparse.ArgumentParser(description="HTTP/3 client")
+
+    # 各種コマンドライン引数の定義
     parser.add_argument(
         "url", type=str, nargs="+", help="the URL to query (must be HTTPS)"
     )
@@ -507,17 +535,20 @@ if __name__ == "__main__":
         "--zero-rtt", action="store_true", help="try to send requests using 0-RTT"
     )
 
+    # 引数を解析
     args = parser.parse_args()
 
+    # ロギングの設定
     logging.basicConfig(
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
         level=logging.DEBUG if args.verbose else logging.INFO,
     )
 
+    # 出力ディレクトリが存在しない場合はエラーを出力
     if args.output_dir is not None and not os.path.isdir(args.output_dir):
         raise Exception("%s is not a directory" % args.output_dir)
 
-    # prepare configuration
+    # QUICの設定を準備
     configuration = QuicConfiguration(
         is_client=True, alpn_protocols=H0_ALPN if args.legacy_http else H3_ALPN
     )
@@ -544,8 +575,11 @@ if __name__ == "__main__":
         except FileNotFoundError:
             pass
 
+    # uvloopが利用可能な場合はインストール
     if uvloop is not None:
         uvloop.install()
+
+    # メイン関数を非同期に実行
     asyncio.run(
         main(
             configuration=configuration,
