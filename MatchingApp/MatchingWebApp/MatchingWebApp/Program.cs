@@ -14,6 +14,7 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -41,4 +42,16 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<ChatHub>("/chatHub");
 });
 
-app.Run();
+Console.WriteLine("Application is starting up...");
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Application is faild to ..{ex.ToString()}");
+}
+finally
+{
+    Console.WriteLine("Application is shutting down...");
+}
