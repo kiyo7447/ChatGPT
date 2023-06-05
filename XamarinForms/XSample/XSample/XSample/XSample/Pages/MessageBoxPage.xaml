@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.MessageBoxPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Button Text="OK 応答" Clicked="Button_Clicked"/>
+            <Button Text="OK Cancel応答" Clicked="Button_Clicked_1"/>
+            <Label Text="awaitで待ってあげる必要あり"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

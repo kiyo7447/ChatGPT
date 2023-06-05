@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.ToolbarItemPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="mail.png" Order="Primary" Clicked="AAAToolbarItem_Clicked"/>
+        <ToolbarItem Icon="mail.png" Text="BBB" Order="Primary"  Clicked="BBBToolbarItem_Clicked"/>
+        <ToolbarItem Icon="mail.png" Text="CCC" Order="Secondary"/>
+        <ToolbarItem Icon="mail.png" Text="DDD" Order="Secondary"/>
+    </ContentPage.ToolbarItems>
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Welcome to Xamarin.Forms!"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

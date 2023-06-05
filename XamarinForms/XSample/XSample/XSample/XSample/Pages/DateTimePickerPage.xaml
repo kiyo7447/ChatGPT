@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.DateTimePickerPage">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <DatePicker Date="2019/01/01"
+                        Format="yyyy/MM/dd"
+                        MinimumDate="2019/01/01"
+                        MaximumDate="2020/01/01"/>
+
+            <DatePicker Date="{x:Static sys:DateTime.Now}"/>
+
+            <TimePicker Time="13:00"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

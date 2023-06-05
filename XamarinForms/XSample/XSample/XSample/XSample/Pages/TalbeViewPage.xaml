@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.TalbeViewPage">
+    <ContentPage.Content>
+
+        <TableView>
+            <TableView.Root>
+                <TableRoot>
+                    <TableSection Title="AAA">
+                        <TextCell Text="てきすと"/>
+                        <TextCell Text="名前" Detail="詳細な文字"/>
+                        <EntryCell Label="BBB"
+                                   Placeholder="メモ"
+                                   Keyboard="Text"
+                                   Completed="EntryCell_Completed"/>
+                        <SwitchCell Text="Wi-Fi"
+                                    On="True"
+                                    OnChanged="SwitchCell_OnChanged"/>
+                    </TableSection>
+                </TableRoot>
+            </TableView.Root>
+        </TableView>
+    </ContentPage.Content>
+</ContentPage>

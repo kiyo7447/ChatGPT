@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:uc="clr-namespace:XSample.UserControls"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.ControlsPage">
+    <ContentPage.Content>
+
+        <ListView x:Name="MyListView"
+                  ItemTapped="MyListView_ItemTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <uc:MenuViewCell/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>

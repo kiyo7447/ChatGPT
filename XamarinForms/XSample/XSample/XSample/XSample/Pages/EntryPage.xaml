@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.EntryPage">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <Entry Keyboard="Numeric"
+                   Placeholder="Price"
+                   PlaceholderColor="Red"/>
+            <Entry Keyboard="Text"
+                   Placeholder="ID"/>
+            <Entry Keyboard="Text"
+                   Placeholder="パスワード"
+                   IsPassword="True"
+                   Completed="Entry_Completed"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
