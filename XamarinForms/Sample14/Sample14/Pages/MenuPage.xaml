@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App2.Pages.MenuPage">
+    <ContentPage.Content>
+
+        <ListView x:Name="MyListView"
+                  HasUnevenRows = "True"
+                  ItemTapped="MyListView_ItemTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal">
+                            <Image Source="{Binding ImageName}"/>
+                            <StackLayout>
+                                <Label Text="{Binding Title}" TextColor="Blue"/>
+                                <Label Text="{Binding SubTitle}"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </ContentPage.Content>
+</ContentPage>

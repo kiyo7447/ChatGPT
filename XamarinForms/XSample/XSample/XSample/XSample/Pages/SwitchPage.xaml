@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.SwitchPage">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <Switch IsToggled="True"
+                    Toggled="Switch_Toggled"
+                    HorizontalOptions="Center"/>
+            <Image Source="mail.png"
+                   x:Name="MyImage"
+                   HorizontalOptions="Center"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

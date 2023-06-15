@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.PickerPage">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <Picker x:Name="MyPicker"
+                    SelectedIndexChanged="MyPicker_SelectedIndexChanged">
+                <Picker.Items>
+                    <x:String>TEL</x:String>
+                    <x:String>FAX</x:String>
+                    <x:String>MAIL</x:String>
+                </Picker.Items>
+            </Picker>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

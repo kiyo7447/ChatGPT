@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XSample.Pages.DeviceSwichPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="a.pngを指定しても"/>
+            <Label Text="UWPがImagesフォルダーにある場合は"/>
+            <Label Text="UWPで表示されない"/>
+            <Label Text="CodeでImagesフォルダーを指定する必要がある"/>
+            <Image x:Name="MyImage"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
