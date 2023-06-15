@@ -1,4 +1,4 @@
-namespace MatchingApp;
+ï»¿namespace MatchingApp;
 
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Collections.ObjectModel;
@@ -17,11 +17,11 @@ public partial class ChatPage : ContentPage
         MessagesListView.ItemsSource = Messages;
 
 
-        // MessageEntry‚ÌTextChangedƒCƒxƒ“ƒg‚Éƒnƒ“ƒhƒ‰‚ğ’Ç‰Á
+        // MessageEntryã®TextChangedã‚¤ãƒ™ãƒ³ãƒˆã«ãƒãƒ³ãƒ‰ãƒ©ã‚’è¿½åŠ 
         MessageEntry.TextChanged += MessageEntry_TextChanged;
     }
 
-    // MessageEntry_TextChangedƒƒ\ƒbƒh‚ğ’Ç‰Á
+    // MessageEntry_TextChangedãƒ¡ã‚½ãƒƒãƒ‰ã‚’è¿½åŠ 
     private void MessageEntry_TextChanged(object sender, TextChangedEventArgs e)
     {
         SendButton.IsEnabled = !string.IsNullOrEmpty(e.NewTextValue);
@@ -39,7 +39,7 @@ public partial class ChatPage : ContentPage
             .Build();
 
 
-        // ƒ†[ƒU–¼‚ğPreferences‚©‚ç“Ç‚İ‚İAUsernameEntry‚Éİ’è‚µ‚Ü‚·B
+        // ãƒ¦ãƒ¼ã‚¶åã‚’Preferencesã‹ã‚‰èª­ã¿è¾¼ã¿ã€UsernameEntryã«è¨­å®šã—ã¾ã™ã€‚
         var savedUsername = Preferences.Get("Username", string.Empty);
         UsernameEntry.Text = savedUsername;
 
@@ -61,7 +61,7 @@ public partial class ChatPage : ContentPage
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                ConnectedUsersLabel.Text = $"l”F{count}l";
+                ConnectedUsersLabel.Text = $"äººæ•°ï¼š{count}äºº";
             });
         });
 
@@ -74,10 +74,10 @@ public partial class ChatPage : ContentPage
         var username = UsernameEntry.Text;
         var message = MessageEntry.Text;
 
-        // ƒ†[ƒU–¼‚ğPreferences‚É•Û‘¶‚µ‚Ü‚·B
+        // ãƒ¦ãƒ¼ã‚¶åã‚’Preferencesã«ä¿å­˜ã—ã¾ã™ã€‚
         Preferences.Set("Username", username);
 
-        //ƒƒbƒZ[ƒW‚ª“ü—Í‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢B
+        //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒå…¥åŠ›ã•ã‚Œã¦ã„ãªã„å ´åˆã¯ä½•ã‚‚ã—ãªã„ã€‚
         if (string.IsNullOrEmpty(message))
         {
             return;

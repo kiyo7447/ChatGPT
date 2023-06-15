@@ -16,8 +16,13 @@ Authorization: Bearer OPENAI_API_KEY
 1. installするライブラリ  
 pip install openai
 
+2. まだ、意味不明
+pip install -e .
 
 # 実行方法
+python ./chat_model_text.py
+
+
 適当にプログラムを書いて実行します。
 
 curl https://api.openai.com/v1/chat/completions \
