@@ -3,6 +3,8 @@
 using System;
 using System.Numerics;
 using System.Security.Cryptography;
+using System.Numerics.MPFR;
+
 
 //開始ログをConsoleに出力します。
 Console.WriteLine("Start PIConsoleApp");
@@ -17,7 +19,9 @@ Console.WriteLine(ComputePiチュードーンサリアナアルゴリズム(prec
 //終了ログをConsoleに出力します。
 Console.WriteLine("End PIConsoleApp");
 
-
+//こいつは、チュードーンサリアナアルゴリズムを使って円周率を計算する関数です。
+//しかし、結果の桁数は低いです。なぜなら、double型を使っているからです。
+//3.14144648
 static double ComputePiチュードーンサリアナアルゴリズム(int digits)
 {
     const int Digits = 1000;
