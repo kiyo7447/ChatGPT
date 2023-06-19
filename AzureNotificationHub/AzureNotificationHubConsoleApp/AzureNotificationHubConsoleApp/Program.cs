@@ -7,6 +7,7 @@ Console.WriteLine("Hello, World!");
 var builder = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional:false)
+    .AddJsonFile("local.appsettings.json", optional: false)
     .AddEnvironmentVariables();
 
 IConfiguration configuration = builder.Build();
@@ -17,5 +18,5 @@ string? notificationHubName = configuration["NotificationHubName"];
 
 //NotificationServiceを実体化して使用します。
 var notificationService = new NotificationService(notificationHubConnectionString, notificationHubName);
-notificationService.SendNotificationAsync("Hello, World!", new List<string>() { "uid-222", "tag2" }).Wait();
+notificationService.SendNotificationAsync("Hello, World!aa", new List<string>() { "uid-222", "tag2" }).Wait();
 

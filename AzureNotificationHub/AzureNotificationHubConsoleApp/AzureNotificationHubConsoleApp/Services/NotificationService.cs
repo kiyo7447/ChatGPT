@@ -20,7 +20,8 @@ namespace AzureNotificationHubConsoleApp.Services
         public async Task SendNotificationAsync(string message, List<string> tags)
         {
             // Android notification payload
-            var androidPayload = "{ \"data\" : {\"message\":\"" + message + "\"}}";
+//            var androidPayload = "{ \"data\" : {\"message\":\"" + message + "\"}}";
+            var androidPayload = "{ \"notification\" : {\"title\" : \"Notification Hub Test Notification\", \"body\":\"" + message +  "\"},     \"data\" : {\"message\":\"" + message + "\"}}";
 
             // iOS notification payload
             var applePayload = "{\"aps\":{\"alert\":\"" + message + "\"}}";
