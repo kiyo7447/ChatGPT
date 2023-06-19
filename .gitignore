@@ -227,4 +227,6 @@ $RECYCLE.BIN/
 
 #Visual Studio Code
 .vscode
-/AzureNotificationHub/AzureNotificationHubConsoleApp/AzureNotificationHubConsoleApp/appsettings.json
+
+
+local.appsettings.json
