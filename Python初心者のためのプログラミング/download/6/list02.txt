@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        HStack {
+            Image("犬吉").resizable().scaledToFit()
+            Image("猫吉").resizable().scaledToFit()
+            Image("豚吉").resizable().scaledToFit()
+        }
+    }
+}

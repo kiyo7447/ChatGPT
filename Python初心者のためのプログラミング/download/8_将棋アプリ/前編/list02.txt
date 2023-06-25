@@ -1,0 +1,20 @@
+# Canvasのテストプログラム その1
+import tkinter
+
+# <Button-1>イベント時のイベントハンドラ
+def canvas_click(event):
+  xa = event.x
+  ya = event.y
+  canvas.create_rectangle(xa, ya,
+    xa + 10, ya + 10, fill="Red")
+
+root = tkinter.Tk()      # ウインドウ作成
+root.geometry("640x480") # ウインドウサイズ設定
+# キャンバス作成
+canvas = tkinter.Canvas(root,
+  width=640, height=480)   
+canvas.pack()            # キャンバスを配置
+# <Button-1>イベント時のイベントハンドラを指定
+canvas.bind("<Button-1>", canvas_click)
+root.mainloop()
+

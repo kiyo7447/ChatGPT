@@ -1,0 +1,38 @@
+// Sprite test for Gameboy(main.c)
+#include <gb/gb.h>
+
+#define PALDATA (unsigned char)((3<<6)|(2<<4)|(1<<2)|(0<<0))
+
+// スプライト用パターン
+const unsigned char patternsp[] = {
+  0x18, 0x18, 0x19, 0x00, 0x00, 0x7E, 0x80, 0x18,
+  0x18, 0x18, 0x00, 0x1E, 0x80, 0xF2, 0x83, 0x83
+};
+
+void main()
+{
+  unsigned char spnum, x, y;   // スプライト番号、X、Y
+  unsigned char button;        // ボタン情報
+
+  disable_interrupts();  // 割り込みの禁止
+  DISPLAY_OFF;           // 画面表示をオフ
+  set_sprite_data(0, 1, patternsp); // パターン設定
+  OBP0_REG = PALDATA;               // パレット設定
+  spnum = 0;
+  set_sprite_tile(spnum, 0);     // パターン番号
+  set_sprite_prop(spnum, 0x00);  // OAM Property Flags
+  SHOW_SPRITES;
+  DISPLAY_ON;            // 画面表示をオン
+  enable_interrupts();   // 割り込みの許可
+  x = 80;
+  y = 72;
+  while (1) {
+    wait_vbl_done();      // Vブランクを待つ
+    button = joypad();    // ボタンを検出
+    if (button & J_UP   ) y--;
+    if (button & J_DOWN ) y++;
+    if (button & J_LEFT ) x--;
+    if (button & J_RIGHT) x++;
+    move_sprite(0, x, y);
+  }
+}

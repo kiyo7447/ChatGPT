@@ -1,0 +1,140 @@
+#define PPUCTRL    *(char*)0x2000  // PPU制御レジスタ
+#define PPUMASK    *(char*)0x2001  // PPUマスクレジスタ
+#define PPUSTATUS  *(char*)0x2002  // PPUステータスレジスタ
+#define OAMADDR    *(char*)0x2003  // OAMアドレスポート
+#define OAMDATA    *(char*)0x2004  // OAMデータポート
+#define PPUSCROLL  *(char*)0x2005  // PPUスクロールレジスタ
+#define PPUADDR    *(char*)0x2006  // PPUアドレスレジスタ
+#define PPUDATA    *(char*)0x2007  // PPUデータレジスタ
+#define JOYPAD1    *(char*)0x4016  // コントローラー1
+#define OAMDMA     *(char*)0x4014  // OAM DMAレジスタ
+// スプライトワーク格納アドレス
+#define SPWADDR    0x700           
+
+#define BUTTON_UP     0x08  // ボタン 上
+#define BUTTON_DOWN   0x04  // ボタン 下
+#define BUTTON_LEFT   0x02  // ボタン 左
+#define BUTTON_RIGHT  0x01  // ボタン 右
+#define OUTSIDE       240   // 画面外の座標
+
+// スプライト用 パターン
+const unsigned char patternsp[] = {
+  0x18, 0x1D, 0x66, 0x80, 0x00, 0x80, 0x83, 0x00,
+  0x00, 0x1D, 0x18, 0x98, 0x1E, 0x72, 0x00, 0x00
+};
+
+// スプライト用 カラーテーブル
+const char colortable[] = { 0x0F ,0x12 ,0x16 ,0x28 };
+
+// PPUアドレス設定(アドレス0x0000～0xffff)
+void ppu_address(unsigned short adr)
+{
+  PPUADDR = adr >> 8;    // アドレス上位8bit
+  PPUADDR = adr & 0xff;  // アドレス下位8bit
+}
+
+// コントローラー1入力
+unsigned char controller1(void)
+{
+  unsigned char ret = 0;
+  char i;
+  JOYPAD1 = 0x01;    // ボタン入力を開始
+  JOYPAD1 = 0x00;    // ボタン入力をラッチ
+  for (i=0; i<8; i++) {
+    ret <<= 1;
+    if (JOYPAD1 & (1<<0)) ret |= 1;  // ボタンが押された
+  }
+  return(ret);   // 戻り値 = ボタンの状態(8bit)
+}
+
+// カラーパレット設定
+// (格納先ポインタ, オフセット0～7, パレット数1～8)
+void ppu_palette(char *ptable, char ofs, char size)
+{
+  size *= 4;     // 1パレットあたり4バイト
+  ppu_address(0x3f00 + (ofs * 4));
+  while (size--) {
+    PPUDATA = *ptable++;
+  }
+}
+
+// パターンテーブル設定
+// (格納先ポインタ, オフセット0～511, 枚数1～512)
+void ppu_pattern(unsigned char *ptable, short ofs, short size)
+{
+  size *= 16;   // 1枚あたり16バイト
+  ppu_address(ofs * 16);   // パターンテーブルのアドレス
+  while (size--) {
+    PPUDATA = *ptable++;
+  }
+}
+
+// Vブランクを待つ
+void ppu_vsync(void)
+{
+  // bit7が0の場合、画面描画中
+  while ((PPUSTATUS & (1<<7)) == 0); 
+}
+
+// スプライトワークのDMA転送を開始する
+void sp_dmastart(void)
+{
+  OAMADDR = 0;            // 転送先OAMアドレス
+  OAMDMA = SPWADDR >> 8;  // 転送元アドレス上位8bit
+}
+
+// スプライト移動(スプライト番号0～63, x, y, タイル番号)
+void sp_move(char num, unsigned char x, unsigned char y, unsigned char tile)
+{
+  unsigned char *ptr;
+  // スプライトワーク書き込みアドレス
+  ptr = (unsigned char *)SPWADDR + (num * 4); 
+  ptr[0] = y;     // スプライト Y座標
+  ptr[1] = tile;  // スプライト タイル番号
+  ptr[2] = 0x00;  // スプライト アトリビュート
+  ptr[3] = x;     // スプライト X座標
+}
+
+// BGスクロール設定(X座標0～511, Y座標0～239)
+void bg_scroll(unsigned short x, unsigned char y)
+{
+  PPUSCROLL = (x & 0xff);   // X座標(0～255)
+  PPUSCROLL = y;            // Y座標(0～239)
+  // X座標256以上は画面B
+  PPUCTRL = 0x08 + ((x >> 8) & 1);  
+}
+
+// メイン関数
+char NesMain()
+{
+  // スプライト番号、X座標、Y座標
+  unsigned char spnum, x, y;  
+  unsigned char button;     // ボタン情報
+  for (spnum=0; spnum<63; spnum++) {
+    // スプライト初期化
+    sp_move(spnum, OUTSIDE, OUTSIDE, 0);  
+  }
+  ppu_vsync();            // Vブランク待ち
+  // SPパターンテーブル
+  ppu_pattern((unsigned char *)patternsp, 256, 1);
+  // SPカラーパレット設定  
+  ppu_palette((char *)colortable, 4, 1);
+  bg_scroll(0, 0);        // BGスクロール設定
+  spnum = 0;
+  x = 128;
+  y = 120;
+  // 表示の有効化(bit4=SP/bit3=BG)
+  PPUMASK = (1<<4) + (0<<3) + 6;  
+  while(1) {   // メインループ
+    button = controller1();   // コントローラー1入力
+    if (button & BUTTON_UP   ) y--;
+    if (button & BUTTON_DOWN ) y++;
+    if (button & BUTTON_RIGHT) x++;
+    if (button & BUTTON_LEFT ) x--;
+    sp_move(spnum, x, y, 0); // スプライトの移動
+    ppu_vsync();             // Vブランク待ち
+    sp_dmastart();           // OMAへのDMA転送開始
+  }
+  return 0;
+}
+

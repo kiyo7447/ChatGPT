@@ -1,0 +1,35 @@
+import sqlite3
+
+conn = sqlite3.connect('collection.db')
+cur = conn.cursor()
+cur.execute("""CREATE TABLE books(
+               id INTEGER PRIMARY KEY AUTOINCREMENT,
+               isbn TEXT,
+               title TEXT NOT NULL,
+               author TEXT,
+               publisher TEXT,
+               release TEXT,
+               price INTEGER,
+               image TEXT)""")
+
+# 入力データ
+books = [['0123-A1234','ビジネスPython超入門', \
+          '中島　省吾', '日経BP','2019年6月10日',2640,'img_001.png'],
+         ['B07HMN68L9','5日間で学ぶPython　AIプログラミング編', \
+          '中島　省吾','日経BP','2018年9月25日',880,'img_002.png']]
+
+sql= """INSERT INTO books(isbn, 
+                        title,
+                        author,
+                        publisher,
+                        release,price, 
+                        image) VALUES (?, ?, ?, ?, ?, ?, ?)"""
+
+for i in range(len(books)):
+	cur.execute(sql, books[i])
+conn.commit()
+
+for row in cur.execute("SELECT * FROM books"):
+  print(row)
+
+conn.close()

@@ -1,0 +1,6 @@
+import random
+
+for i in range(100):
+  n = random.randint(2, 10)
+  a = [random.randint(0, 10000) for j in range(n)]
+  print(ag_mean_n_test(*a))

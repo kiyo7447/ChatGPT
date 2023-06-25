@@ -1,0 +1,22 @@
+        # ボールが衝突したときの処理の分岐
+        for i in range(self.cHandler.getNumEntries()):
+            entry = self.cHandler.getEntry(i)
+            name = entry.getIntoNode().getName()
+            if name == "wall_collide":
+                self.wallCollideHandler(entry)
+            elif name == "ground_collide":
+                self.groundCollideHandler(entry)
+            elif name == "loseTrigger":
+                self.loseGame(entry)
+            elif name =="goalCol":
+                self.winGame(entry)
+
+        # ボールの速度や向きの計算
+        self.ballV += self.accelV * dt * ACCEL
+        if self.ballV.lengthSquared() > MAX_SPEED_SQ:
+            self.ballV.normalize()
+            self.ballV *= MAX_SPEED
+        self.ballRoot.setPos(self.ballRoot.getPos() + (self.ballV * dt))
+        prevRot = LRotationf(self.ball.getQuat())
+        axis = LVector3.up().cross(self.ballV)
+        newRot = LRotationf(axis, 45.5 * dt

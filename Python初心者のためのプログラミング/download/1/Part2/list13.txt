@@ -1,0 +1,1 @@
+print('Python“ü–å'.replace('Python', 'ƒpƒCƒ\ƒ“'))

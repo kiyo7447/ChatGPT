@@ -1,0 +1,7 @@
+echo off
+set CCPATH=C:\gbdk\bin
+set SRCFILE=main.c
+set GBFILE=rom.gb
+%CCPATH%\lcc -o %GBFILE% %SRCFILE%
+pause
+

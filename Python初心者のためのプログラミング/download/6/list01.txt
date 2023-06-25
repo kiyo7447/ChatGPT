@@ -1,0 +1,11 @@
+import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        VStack {
+            Image("犬吉")
+            Image("猫吉")
+            Image("豚吉")
+        }
+    }
+}

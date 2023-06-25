@@ -1,0 +1,12 @@
+<html>
+<head>
+<title>バーゼル問題の式</title>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+$$
+\sum_{n=1}^{\infty} \frac{1}{n^2}=\frac{1}{1^2}+\frac{1}{2^2}+\frac{1}{3^2}+\cdots
+$$
+</body>
+</html>

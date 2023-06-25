@@ -1,0 +1,3 @@
+import math
+hz, rate = 440, 44100
+data = [math.sin(x*hz*math.pi*2/rate) for x in range(rate)]

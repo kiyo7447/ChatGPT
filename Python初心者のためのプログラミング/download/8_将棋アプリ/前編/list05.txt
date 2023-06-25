@@ -1,0 +1,269 @@
+# 将棋
+import tkinter
+from tkinter import messagebox
+
+CELLSIZE = 48         # マスのピクセル数
+FONTSIZE = ("", 24)   # フォント設定
+BOARDW = 19           # 将棋盤バッファの幅
+BOARDH = 11           # 将棋盤バッファの高さ
+OFSX = 5              # 将棋盤のオフセットX座標
+OFSY = 1              # 将棋盤のオフセットY座標
+
+vectable = [   # ベクトルテーブル
+  ( 0, -1),
+  ( 1, -1),
+  ( 1,  0),
+  ( 1,  1),
+  ( 0,  1),
+  (-1,  1),
+  (-1,  0),
+  (-1, -1),
+  ( 1, -2),
+  (-1, -2) 
+]
+
+nametable = [   # 駒の名前テーブル
+  "玉", "飛", "角", "金", "銀", "桂", "香",
+  "歩", ""  , "竜", "馬", ""  , "全", "圭",
+  "杏", "と"
+]
+
+movetable = [   # 駒の移動量テーブル
+  [ 1,1,1,1,1,1,1,1,0,0 ],  #  0:王将（玉）
+  [ 8,0,8,0,8,0,8,0,0,0 ],  #  1:飛車（飛）
+  [ 0,8,0,8,0,8,0,8,0,0 ],  #  2:角行（角）
+  [ 1,1,1,0,1,0,1,1,0,0 ],  #  3:金将（金）
+  [ 1,1,0,1,0,1,0,1,0,0 ],  #  4:銀将（銀）
+  [ 0,0,0,0,0,0,0,0,1,1 ],  #  5:桂馬（桂）
+  [ 8,0,0,0,0,0,0,0,0,0 ],  #  6:香車（香）
+  [ 1,0,0,0,0,0,0,0,0,0 ],  #  7:歩兵（歩）
+  [ 0,0,0,0,0,0,0,0,0,0 ],  #  8:----------
+  [ 8,1,8,1,8,1,8,1,0,0 ],  #  9:竜王（竜）
+  [ 1,8,1,8,1,8,1,8,0,0 ],  # 10:竜馬（馬）
+  [ 0,0,0,0,0,0,0,0,0,0 ],  # 11:----------
+  [ 1,1,1,0,1,0,1,1,0,0 ],  # 12:成銀（全）
+  [ 1,1,1,0,1,0,1,1,0,0 ],  # 13:成桂（圭）
+  [ 1,1,1,0,1,0,1,1,0,0 ],  # 14:成香（杏）
+  [ 1,1,1,0,1,0,1,1,0,0 ]   # 15:と金（と）
+]
+
+setup = [   # 駒の初期配置
+  [ 7, 7, 7, 7, 7, 7, 7, 7, 7],
+  [-1, 2,-1,-1,-1,-1,-1, 1,-1],
+  [ 6, 5, 4, 3, 0, 3, 4, 5, 6]
+]
+
+# 駒のY座標のマージン
+margin = [ 0, 0, 0, 0, 0, 2, 1, 1 ]
+piecepos  = [(17, 9), (1, 1)] # 持ち駒を置く座標
+playtbl = ["先手", "後手"]    # プレイヤーの表示名
+turn = 0                      # 0=先手、1=後手
+startpos = (-1, -1)           # 移動開始座標
+
+# 駒のクラス
+class Piece:
+  def __init__(self):
+    self.num = -1     # 駒の種類（-1=駒がない）
+    self.player = 0   # 駒の向き（0=先手、1=後手）
+    # 移動フラグ（True=移動可能）
+    self.movable = False 
+
+# 将棋盤バッファに書き込む関数
+def setpiece(pos, num, player, movable):  
+  index = (pos[1] * BOARDW) + pos[0]
+  board[index].num   = num
+  board[index].player  = player
+  board[index].movable = movable
+
+# 将棋盤バッファを読み込む関数
+def getpiece(pos):           
+  index = (pos[1] * BOARDW) + pos[0]
+  num = board[index].num
+  player = board[index].player
+  movable = board[index].movable
+  return num, player, movable
+
+# 将棋盤を初期化する関数
+def initboard():
+  for y in range(3):
+    for x in range(9):
+      setpiece((OFSX+x, OFSY+y+6),
+        setup[y][x], 0, False)   # 先手
+      setpiece((OFSX + 8 - x, OFSY + 2 - y),
+        setup[y][x], 1, False)   # 後手
+
+# <Button-1>イベント時のイベントハンドラ
+def canvas_click(event):
+  clickpos = (int(event.x / CELLSIZE),
+              int(event.y / CELLSIZE))
+  if startpos == (-1, -1):
+    movestart(clickpos)   # 駒の移動開始
+  else:
+    moveend(clickpos)     # 駒の移動終了
+
+# 駒の移動開始関数
+def movestart(pos):
+  global startpos
+  num, player, movable = getpiece(pos)
+  # 駒が移動不可
+  if num == -1 or player != turn:
+    return 
+  startpos = pos            # 駒を選択
+  # 色をシアンに
+  drawpiece(startpos, num, player, "Cyan") 
+  if isinside(startpos, OFSX, OFSY, 9, 9) == False:
+    # 配置可能マスを描画
+    for x in range(OFSX, OFSX + 9):  
+      fu = 0
+      for y in range(OFSY, OFSY + 9):
+        num2,player2,movable2 = getpiece((x, y))
+        if player == player2 and num2 == 7:
+          fu += 1   # 歩を数える
+      # 二歩の場合
+      if num == 7 and fu > 0:
+        continue  
+      ya = OFSY + ((1 - player) * margin[num])
+      yb = OFSY + 9 - (player * margin[num])
+      for y in range(ya, yb):   # 空白を探す
+        pos = (x, y)
+        num2, player2, movable2 = getpiece(pos)
+        if num2 == -1:   # 空白を検出
+          # 色をマゼンタに
+          drawpiece(pos, -1, 0, "Magenta")
+          # 移動可能   
+          setpiece(pos, num2, player2, True) 
+    return
+
+  # 移動可能マスを描画
+  for vectol in range(10):  
+    pos = startpos
+    xd, yd = vectable[vectol]
+    if player == 1:
+      yd = -yd
+    for j in range(movetable[num][vectol]):
+      pos = (pos[0] + xd, pos[1] + yd)
+      if isinside(pos, OFSX, OFSY, 9, 9) == False:
+        break   # 盤の外へ
+      num2, player2, movable2 = getpiece(pos)
+      if num2 != -1 and player == player2:
+        break
+      # 色をマゼンタに
+      drawpiece(pos, num2, player2, "Magenta")
+      # 移動可能
+      setpiece(pos, num2, player2, True)  
+      if num2 != -1:
+        break   # 相手の駒を検出
+
+# 駒の移動終了関数
+def moveend(endpos):
+  global turn
+  # 移動開始の駒
+  num, player, movable = getpiece(startpos)
+  # 移動終了の駒  
+  num2, player2, movable2 = getpiece(endpos) 
+  if movable2 == False:   # 移動不可能
+    redraw()   # 画面全体を再描画＆選択の解除
+    return
+  # 盤上の移動
+  if isinside(startpos, OFSX, OFSY, 9, 9) == True: 
+    exist1 = isinside(startpos,
+               OFSX, OFSY + (6 * player), 9, 3)
+    exist2 = isinside(endpos,
+               OFSX, OFSY + (6 * player), 9, 3)
+    # 敵陣に入るor敵陣から出る
+    if exist1 == True or exist2 == True:
+      # 成っていない
+      if num < 8 and nametable[num | 8] != "":
+        ret = messagebox.askyesno("確認",
+                "成りますか？")
+        if ret == True:
+          num |= 8   # 成駒
+
+  if num2 != -1:   # 移動先に駒が存在する場合
+    x, y = piecepos[player]
+    flip = ((player * 2) - 1)
+    for j in range(27):
+      pos = (x + (j % 3) * flip, y + int(j / 3) * flip)
+      num3, player3, movable3 = getpiece(pos)
+      if num3 == -1:   # 持ち駒の追加
+        setpiece(pos, num2 & 7, player, False)
+        break
+
+  # 駒を消す
+  setpiece(startpos, -1, player, False)
+  # 駒を置く 
+  setpiece(endpos, num, player, False) 
+  turn ^= 1   # プレイヤーの切り替え
+  redraw()   # 画面全体を再描画＆選択の解除
+
+# 駒が範囲内に存在するか？
+def isinside(pos, ax, ay, w, h):
+  if pos[0] < ax or pos[0] >= (ax + w):
+    return False
+  if pos[1] < ay or pos[1] >= (ay + h):
+    return False
+  return True
+
+# 駒/盤面を描画（座標, 種類, プレイヤー番号 ,色）
+def drawpiece(pos, num, player, color):
+  xa = pos[0] * CELLSIZE
+  ya = pos[1] * CELLSIZE
+  if isinside(pos, OFSX, OFSY, 9, 9) == True or num != -1:
+    canvas.create_rectangle(xa, ya, 
+      xa + CELLSIZE, ya + CELLSIZE, fill=color)
+
+  if num == -1:
+    return
+  xa += int(CELLSIZE / 2)
+  ya += int(CELLSIZE / 2)
+  flip = (1- (player * 2))
+  x1 = xa
+  y1 = ya - int(CELLSIZE * 2 / 5) * flip
+  x2 = xa + int(CELLSIZE * 2 / 6)
+  y2 = ya - int(CELLSIZE * 1 / 4) * flip
+  x3 = xa + int(CELLSIZE * 2 / 5)
+  y3 = ya + int(CELLSIZE * 2 / 5) * flip
+  x4 = xa - int(CELLSIZE * 2 / 5)
+  y4 = ya + int(CELLSIZE * 2 / 5) * flip
+  x5 = xa - int(CELLSIZE * 2 / 6)
+  y5 = ya - int(CELLSIZE * 1 / 4) * flip
+  canvas.create_polygon(x1, y1, x2, y2, 
+    x3, y3, x4, y4, x5, y5, fill="Khaki1")
+  deg = 180 * player
+  tcolor = "Black"
+  if num >= 8:
+    tcolor = "Red"
+  canvas.create_text(xa, ya, text=nametable[num],
+    font=FONTSIZE, angle=deg, fill=tcolor) 
+
+# 画面全体を再描画＆選択の解除
+def redraw():
+  global startpos
+  startpos = (-1, -1)   # 選択の解除
+  canvas.create_rectangle(0, 0, 912, 528, fill="Green1")
+  ya = int(CELLSIZE / 2) + (CELLSIZE * 10 * (1 - turn))
+  canvas.create_text(456, ya, 
+    text=playtbl[turn], font=FONTSIZE) 
+  for y in range(BOARDH):
+    for x in range(BOARDW):
+      pos = (x, y)
+      num, player, movable = getpiece(pos)
+      # 駒を描画
+      drawpiece(pos, num, player, "Burlywood2") 
+      setpiece(pos, num, player, False)
+
+board = []   # 将棋盤バッファを作成
+for i in range(BOARDW * BOARDH):
+  board.append(Piece())
+
+root = tkinter.Tk()            # ウインドウ作成
+root.title("Shogi")            # タイトル
+root.geometry("912x528")       # ウインドウサイズ設定
+# キャンバス作成
+canvas = tkinter.Canvas(root, width=912, height=528)   
+canvas.pack()   # キャンバスを配置
+# <Button-1>イベント時のイベントハンドラを指定
+canvas.bind("<Button-1>", canvas_click) 
+initboard()   # 将棋盤の初期化
+redraw()      # 画面全体を再描画
+root.mainloop()

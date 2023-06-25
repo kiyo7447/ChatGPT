@@ -1,0 +1,55 @@
+import SwiftUI
+
+struct ContentView: View {
+    @State private var img: UIImage?
+    @State var showingImgPick = false
+    //輝度の数値を格納する変数
+    @State var brightness = 0.0
+    //彩度の数値格納する変数
+    @State var saturation = 1.0
+    //コントラストの数値を格納する変数
+    @State var contrast = 1.0
+
+    var body: some View {
+        VStack {
+            if let uiImage = img {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .brightness(brightness)
+                    .saturation(saturation)
+                    .contrast(contrast)
+            } else {
+                Image("top")
+                    .resizable()
+                    .scaledToFit()
+                    .brightness(brightness)
+                    .saturation(saturation)
+                    .contrast(contrast)
+            }
+
+            Button(action: {
+                showingImgPick = true
+            }) {
+                Text("フォトライブラリから選択")
+            }
+            .sheet(isPresented: $showingImgPick) {
+                ImgPick(source: .photoLibrary, selectedImg: $img)
+            }
+            Button(action: {
+                self.brightness = -0.4
+                self.saturation = 0.1
+                self.contrast = 0.5
+            },label: {
+                Text("モノクロ")
+            }).padding()
+            Button(action: {
+                self.brightness = 0.0
+                self.saturation = 1.0
+                self.contrast = 1.0
+            },label: {
+            Text("もとに戻す")
+            })
+        }
+    }
+}

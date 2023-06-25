@@ -1,0 +1,27 @@
+    # groundCollideHandler関数の定義
+    def groundCollideHandler(self, colEntry):
+        newZ = colEntry.getSurfacePoint(render).getZ()
+        self.ballRoot.setZ(newZ + .4)
+
+        norm = colEntry.getSurfaceNormal(render)
+        accelSide = norm.cross(LVector3.up())
+        self.accelV = norm.cross(accelSide)
+
+    # wallCollideHandler関数の定義
+    def wallCollideHandler(self, colEntry):
+        norm = colEntry.getSurfaceNormal(render) * -1 # 壁の法線
+        curSpeed = self.ballV.length() # 現在の速度
+        inVec = self.ballV / curSpeed # 進行方向
+        velAngle = norm.dot(inVec) # 角度
+        hitDir = colEntry.getSurfacePoint(render) - self.ballRoot.getPos()
+        hitDir.normalize()
+
+        hitAngle = norm.dot(hitDir)
+
+        if velAngle > 0 and hitAngle > .995:
+            reflectVec = (norm * norm.dot(inVec * -1) * 2) + inVec
+            self.ballV = reflectVec * (curSpeed * (((1 - velAngle) * .5) + .5))
+            disp = (colEntry.getSurfacePoint(render) -
+                    colEntry.getInteriorPoint(render))
+            newPos = self.ballRoot.getPos() + disp
+            self.ballRoot.setPos(newPos)

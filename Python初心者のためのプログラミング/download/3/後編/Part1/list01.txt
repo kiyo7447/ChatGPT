@@ -1,0 +1,11 @@
+# ライブラリのインポート
+import sqlite3 
+
+# データベースの作成（既に存在する場合は接続）
+conn = sqlite3.connect('sample.db')
+
+# 接続の切断
+conn.close()
+
+
+

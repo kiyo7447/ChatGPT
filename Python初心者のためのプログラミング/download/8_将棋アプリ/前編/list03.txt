@@ -1,0 +1,39 @@
+# Canvasのテストプログラム その2
+import tkinter
+
+CELLSIZE = 96       # マスのピクセル数
+FONTSIZE = ("", 48) # フォント設定
+
+# <Button-1>イベント時のイベントハンドラ
+def canvas_click(event):
+  xa = event.x
+  ya = event.y
+  canvas.create_rectangle(xa, ya,
+    xa + CELLSIZE, ya + CELLSIZE, fill="Red")
+  xa += int(CELLSIZE / 2)
+  ya += int(CELLSIZE / 2)
+  x1 = xa
+  y1 = ya - int(CELLSIZE * 2 / 5)
+  x2 = xa + int(CELLSIZE * 2 / 6)
+  y2 = ya - int(CELLSIZE * 1 / 4)
+  x3 = xa + int(CELLSIZE * 2 / 5)
+  y3 = ya + int(CELLSIZE * 2 / 5)
+  x4 = xa - int(CELLSIZE * 2 / 5)
+  y4 = ya + int(CELLSIZE * 2 / 5)
+  x5 = xa - int(CELLSIZE * 2 / 6)
+  y5 = ya - int(CELLSIZE * 1 / 4)
+  canvas.create_polygon(x1, y1, x2, y2, x3, y3,
+    x4, y4, x5, y5, fill="Yellow")
+  canvas.create_text(xa, ya, text="歩",
+    font=FONTSIZE) 
+
+root = tkinter.Tk()      # ウインドウ作成
+root.geometry("640x480") # ウインドウサイズ設定
+# キャンバス作成
+canvas = tkinter.Canvas(root,
+  width=640, height=480)   
+canvas.pack()            # キャンバスを配置
+# <Button-1>イベント時のイベントハンドラを指定
+canvas.bind("<Button-1>", canvas_click)
+root.mainloop()
+

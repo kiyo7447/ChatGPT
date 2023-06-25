@@ -1,0 +1,4 @@
+from PIL import Image
+image = Image.new('RGB', (256, 256))
+_ = [image.putpixel((x, y), (x, y, (x+y)//2)) for x in range(256) for y in range(256)]
+image.save('image2.png')

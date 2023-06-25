@@ -1,0 +1,21 @@
+import tkinter as tk
+from tkinter import messagebox
+
+root = tk.Tk()
+root.title('ボタンテスト')
+root.geometry('300x150')
+
+txt = tk.Entry(width=20)
+txt.pack(pady=50)
+
+# ハンドラ関数
+def click():
+  messagebox.showinfo('メッセージ', txt.get())
+
+# Buttonウィジェットの生成と配置
+btn = tk.Button(root, text='表示', command=click)
+btn.pack()
+
+root.mainloop()
+
+

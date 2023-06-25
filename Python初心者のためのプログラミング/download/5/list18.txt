@@ -1,0 +1,2 @@
+# ゴールの衝突判定
+from panda3d.core import CollisionBox,Point3

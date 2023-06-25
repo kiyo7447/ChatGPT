@@ -1,0 +1,2 @@
+import soundfile
+soundfile.write('sound.wav', data, rate)

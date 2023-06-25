@@ -1,0 +1,22 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.arange(-10, 10, 0.1)
+y = x**2 + 2 * x - 3
+y_line = -x + 1
+
+fig = plt.figure(dpi=150)
+ax = fig.add_subplot()
+
+ax.set_aspect('equal')
+ax.set_xlim(-8, 7)
+ax.set_ylim(-5, 10)
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+
+ax.plot(x, y, c='blue')
+ax.plot(x, y_line, c='red')
+
+ax.fill_between(x, y, y_line, where=y_line>y, color='purple')
+
+plt.grid()

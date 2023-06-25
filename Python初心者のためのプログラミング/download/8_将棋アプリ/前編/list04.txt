@@ -1,0 +1,77 @@
+# 駒の表示
+import tkinter
+
+CELLSIZE = 24        # マスのピクセル数
+FONTSIZE = ("", 16)  # フォント設定
+
+vectable = [   # ベクトルテーブル
+  ( 0, -1),
+  ( 1, -1),
+  ( 1,  0),
+  ( 1,  1),
+  ( 0,  1),
+  (-1,  1),
+  (-1,  0),
+  (-1, -1),
+  ( 1, -2),
+  (-1, -2) 
+]
+
+nametable = [   # 駒の名前テーブル
+  "玉", "飛", "角", "金", "銀", "桂", "香",
+  "歩", ""  , "竜", "馬", ""  , "全", "圭",
+  "杏", "と"
+]
+
+movetable = [   # 駒の移動量テーブル
+  [ 1,1,1,1,1,1,1,1,0,0 ],  #  0:王将（玉）
+  [ 8,0,8,0,8,0,8,0,0,0 ],  #  1:飛車（飛）
+  [ 0,8,0,8,0,8,0,8,0,0 ],  #  2:角行（角）
+  [ 1,1,1,0,1,0,1,1,0,0 ],  #  3:金将（金）
+  [ 1,1,0,1,0,1,0,1,0,0 ],  #  4:銀将（銀）
+  [ 0,0,0,0,0,0,0,0,1,1 ],  #  5:桂馬（桂）
+  [ 8,0,0,0,0,0,0,0,0,0 ],  #  6:香車（香）
+  [ 1,0,0,0,0,0,0,0,0,0 ],  #  7:歩兵（歩）
+  [ 0,0,0,0,0,0,0,0,0,0 ],  #  8:----------
+  [ 8,1,8,1,8,1,8,1,0,0 ],  #  9:竜王（竜）
+  [ 1,8,1,8,1,8,1,8,0,0 ],  # 10:竜馬（馬）
+  [ 0,0,0,0,0,0,0,0,0,0 ],  # 11:----------
+  [ 1,1,1,0,1,0,1,1,0,0 ],  # 12:成銀（全）
+  [ 1,1,1,0,1,0,1,1,0,0 ],  # 13:成桂（圭）
+  [ 1,1,1,0,1,0,1,1,0,0 ],  # 14:成香（杏）
+  [ 1,1,1,0,1,0,1,1,0,0 ]   # 15:と金（と）
+]
+
+# 駒の描画（座標, 文字, 色）
+def drawpiece(drawpos, txt, color):
+  xa = drawpos[0] * CELLSIZE
+  ya = drawpos[1] * CELLSIZE
+  canvas.create_rectangle(xa, ya,
+    xa + CELLSIZE, ya + CELLSIZE, fill=color)
+  xa += int(CELLSIZE / 2)
+  ya += int(CELLSIZE / 2)
+  canvas.create_text(xa, ya,
+    text=txt, font=FONTSIZE) 
+
+root = tkinter.Tk()       # ウインドウ作成
+root.geometry("800x600")  # ウインドウサイズ設定
+# キャンバス作成
+canvas = tkinter.Canvas(root,
+  width=800, height=600)   
+canvas.pack()   # キャンバスを配置
+
+for num in range(16):
+  # 駒の座標
+  pos = ((num%8) * 4 + 2, int(num/8) * 10 + 6)
+  # 駒の描画
+  drawpiece(pos, nametable[num], "Yellow")   
+  for vectol in range(10):
+    # 駒の移動量
+    stepcnt = movetable[num][vectol] 
+    if stepcnt == 0:continue
+    xd, yd = vectable[vectol]
+    # 移動後の座標
+    newpos = (pos[0] + xd, pos[1] + yd)  
+    drawpiece(newpos, str(stepcnt), "Magenta")
+
+root.mainloop()

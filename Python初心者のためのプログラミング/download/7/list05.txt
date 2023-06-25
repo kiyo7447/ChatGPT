@@ -1,0 +1,6 @@
+def basel_problem(n):
+  return sum(map(lambda x: 1/x**2, range(1, n+1)))
+
+
+
+

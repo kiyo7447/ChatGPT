@@ -1,0 +1,5 @@
+sheet = book.active
+sheet['A1'], sheet['B1'] = 'burger', 130
+sheet['A2'], sheet['B2'] = 'potato', 150
+sheet['A3'], sheet['B3'] = 'coffee', 100
+book.save('table.xlsx')

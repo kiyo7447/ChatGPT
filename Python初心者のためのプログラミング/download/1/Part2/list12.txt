@@ -1,0 +1,4 @@
+cities = ['“Œ‹', 'ƒpƒŠ', 'ƒƒ“ƒhƒ“', '–k‹']
+
+for elm in cities:
+    print(elm)

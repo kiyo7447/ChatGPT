@@ -1,0 +1,63 @@
+import tkinter as tk
+from tkinter import messagebox
+import csv
+
+# 次のクイズを設定
+def change_quiz():
+  global quiz_count
+  var.set(0)
+  quiz_count = quiz_count + 1
+  if quiz_count < len(data):
+    question['text'] = data[quiz_count][0]
+    for i in range(len(radio)):
+      radio[i]['text'] = data[quiz_count][i+1]
+      radio[i]['variable'] = var
+      radio[i]['value'] = i + 1
+  else:
+    quiz_count = quiz_count - 1
+    messagebox.showinfo('メッセージ', 
+                        'クイズはもうありません!')
+
+# 正解、不正解の表示
+def judgement():
+  if data[quiz_count][5] == str(var.get()):
+    messagebox.showinfo('正解', '正解です。')
+  else:
+    messagebox.showinfo('不正解', '残念！不正解です！')
+
+root = tk.Tk()
+root.geometry('300x250')
+root.title('4択クイズアプリ')
+
+for i in range(2):
+  root.columnconfigure(i, weight=1)
+for i in range(6):
+  root.rowconfigure(i, weight=1)
+
+quiz_count = 0    # クイズ番号（0始まり）
+var = tk.IntVar() # 選択されているラジオボタンを保持する変数
+data = []         # ファイルから読み込んだクイズデータ
+
+# quiz.csvからクイズデータを読み込む
+with open('quiz.csv',encoding='utf-8', newline='') as csvfile:
+  reader_quiz = csv.reader(csvfile)
+  data = [row for row in reader_quiz]  
+
+question = tk.Label(root, text=data[quiz_count][0])
+question.grid(row=0, column=0, columnspan=2)
+
+# Radiobuttonウィジェットの生成と配置
+radio = []
+for i in range(4):
+  radio.append(tk.Radiobutton(root, 
+                              text=data[quiz_count][i+1], 
+                              variable=var, 
+                              value=i+1))
+  radio[i].grid(row=i+1, column=0, columnspan=2)
+
+answer = tk.Button(root, text='回答', command=judgement)
+answer.grid(row=5, column=0, sticky=tk.N)
+next_quiz = tk.Button(root, text='次のクイズ', command=change_quiz)
+next_quiz.grid(row=5, column=1, sticky=tk.N)
+
+root.mainloop()

@@ -1,0 +1,44 @@
+# ストップウォッチ
+import tkinter
+import threading
+
+# タイマー処理（約1秒周期）
+def timerctrl():
+  global sec
+  sec += running
+  # 受信データを表示
+  lab.configure(text=str(sec)+'秒')
+  # タイマーを作成
+  timer = threading.Timer(1, timerctrl)   
+  timer.start()   # タイマーを開始
+
+# ボタンを押した時に実行する関数
+def button_click(event):
+  global sec, running
+  running ^= 1
+  if running != 0:
+    sec = 0
+
+root = tkinter.Tk()   # ウインドウを作成
+sec = 0       # 秒カウンター
+running = 0   # 動作フラグ
+
+# ラベルを作成
+lab = tkinter.Label(root, text='')
+lab.place(x=10, y=70, width=160, height=20)
+
+# ボタンを作成
+btn = tkinter.Button(root, text='START/STOP')
+btn.place(x=10, y=120, width=170, height=30)
+# ボタンを押した時に実行する関数を設定
+btn.bind("<Button-1>", button_click)
+
+# スレッドを作成
+thread = threading.Thread(target=timerctrl)
+thread.daemon = True
+thread.start()   # スレッドを開始
+
+root.mainloop()
+
+
+

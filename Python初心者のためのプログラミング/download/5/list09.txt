@@ -1,0 +1,7 @@
+    # start関数の定義
+    def start(self):
+        # ボールの初期位置の設定
+
+        # rollTask関数の呼び出し
+        taskMgr.remove("rollTask")
+        self.mainLoop = taskMgr.add(self.rollTask, "rollTask")

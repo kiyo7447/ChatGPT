@@ -1,0 +1,21 @@
+import sqlite3 
+
+conn = sqlite3.connect('sample.db')
+cur = conn.cursor()
+
+# nameが'Tanaka'で始まるデータを抽出
+for row in cur.execute("SELECT * FROM personal WHERE name LIKE 'Tanaka%'"):
+  print(row)
+print()
+
+# nameの中に'ro'を含むデータを抽出
+for row in cur.execute("SELECT * FROM personal WHERE name LIKE '%ro%'"):
+  print(row)
+print() 
+
+# nameが6文字以上で5文字目と6文字目が'ki'であるデータを抽出
+for row in cur.execute("SELECT * FROM personal WHERE name LIKE '____ki%'"):
+  print(row)
+print() 
+
+conn.close()

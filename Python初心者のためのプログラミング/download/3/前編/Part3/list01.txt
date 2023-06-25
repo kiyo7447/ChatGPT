@@ -1,0 +1,43 @@
+import tkinter as tk
+
+# button_1のハンドラ関数
+def change_no2():
+  frame_2.tkraise() # frame_2を前面に出す
+
+# button_2のハンドラ関数
+def change_no1():
+  frame_1.tkraise() # frame_1を前面に出す
+
+root = tk.Tk()
+root.geometry('250x100')
+root.title('tkraise Test')
+
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+
+# 画面1（frame_1）の生成と配置
+frame_1 = tk.Frame(root)
+frame_1.grid(row=0, column=0, sticky=tk.NSEW)
+
+# 画面1のウィジェットの生成と配置
+label_1 = tk.Label(frame_1, text='画面1です。')
+button_1 = tk.Button(frame_1, text='次の画面', 
+                     command=change_no2)
+label_1.pack(pady=10)
+button_1.pack(pady=10)
+
+# 画面2（frame_2）の生成と配置
+frame_2 = tk.Frame(root)
+frame_2.grid(row=0, column=0, sticky=tk.NSEW)
+
+# 画面2のウィジェットの生成と配置
+label_2 = tk.Label(frame_2, text='画面2です。')
+button_2 = tk.Button(frame_2, text='戻る', 
+                     command=change_no1)
+label_2.pack(pady=10)
+button_2.pack(pady=10)
+
+# frame_1を前面に出す
+frame_1.tkraise()
+
+root.mainloop()

@@ -1,0 +1,28 @@
+import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        VStack {
+            HStack {
+                Image("犬吉").resizable().scaledToFit()
+            }
+            HStack {
+                Image("猫吉").resizable().scaledToFit()
+                Image("豚吉").resizable().scaledToFit()
+            }
+            HStack {
+                Image("犬吉").resizable().scaledToFit()
+                Image("猫吉").resizable().scaledToFit()
+                Image("豚吉").resizable().scaledToFit()
+            }
+            HStack {
+                Image("犬吉").resizable().scaledToFit()
+                Image("猫吉").resizable().scaledToFit()
+                Image("豚吉").resizable().scaledToFit()
+                Image("犬吉").resizable().scaledToFit()
+                Image("猫吉").resizable().scaledToFit()
+                Image("豚吉").resizable().scaledToFit()
+            }
+        }
+    }
+}

@@ -1,0 +1,64 @@
+/* Sprite Test for PC Engine(main.c) */
+#include "huc.h"
+
+#define VRAM_SPPTN   0x6000  /* sp pattern address */
+
+const short pattern[] = {
+  0x0000, 0x0000, 0x0000, 0x07A0, 0x07F6, 0x07F6, 0x03C6, 0x7FFE,
+  0x7FFE, 0x67E0, 0x67E0, 0x6000, 0x0000, 0x2000, 0x200E, 0x2000,
+  0x0200, 0x0400, 0x0000, 0x07A0, 0x07F6, 0x07F6, 0x03C0, 0x0000,
+  0x0000, 0x0000, 0x6000, 0x67FC, 0x07FC, 0x3E0C, 0x3E0E, 0x2000,
+  0x03C0, 0x07F8, 0x07F8, 0x0440, 0x0404, 0x0604, 0x0200, 0x0000,
+  0x07E0, 0x0000, 0x4000, 0x4000, 0x0000, 0x6000, 0x600E, 0x600E,
+  0x0380, 0x07C0, 0x07C0, 0x07A0, 0x07F6, 0x07F4, 0x0384, 0x7E1C,
+  0x4000, 0x4600, 0x6600, 0x47F8, 0x0408, 0x1C08, 0x0000, 0x0000
+};
+
+const short palette[] = {
+  0x0000, 0x0020, 0x0100, 0x0120, 0x0004, 0x0024, 0x0104, 0x0124,
+  0x01B6, 0x0038, 0x01C0, 0x01F8, 0x0007, 0x003F, 0x01C7, 0x01FF
+};
+
+main()
+{
+  char num, btn;
+  int x, y;
+  /* set pattern */
+  load_vram(VRAM_SPPTN, pattern, 1 * 64);  
+  /* set palette SP0 */
+  load_palette(16, palette, 1);   
+  /* initialize SATB */
+  init_satb();       
+  num = 0;
+  /* select sprite */
+  spr_set(num);     
+  /* control */
+  spr_ctrl(SIZE_MAS|FLIP_MAS, SZ_16x16|NO_FLIP); 
+  /* pattern */
+  spr_pattern(VRAM_SPPTN);     
+  /* palette */
+  spr_pal(0);     
+  /* priority */
+  spr_pri(1);        
+  put_string("SPRITE TEST", 2, 2);
+  put_string("X=     Y=", 2, 4);
+  x = 256 / 2;
+  y = 224 / 2;
+  while (1) {
+    vsync();  /* wait for vblank */
+    btn = joy(0);  /* input from gamepad */
+    if (btn & JOY_UP  ) y--;
+    if (btn & JOY_DOWN) y++;
+    if (btn & JOY_LEFT) x--;
+    if (btn & JOY_RGHT) x++;
+    /* print '@' */
+    put_char('@', x / 8, y / 8); 
+    put_number(x, 3, 4, 4);
+    put_number(y, 3, 11, 4);
+    spr_set(num);
+    spr_x(x);
+    spr_y(y);
+    satb_update(); /* update sprite */
+  }
+}
+

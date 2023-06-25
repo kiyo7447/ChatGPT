@@ -1,0 +1,10 @@
+num = input()
+
+if num >= 100:
+    print('‡Ši')
+else:
+    print('•s‡Ši')
+
+
+””
+if int(num) >= 100:

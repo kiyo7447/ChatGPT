@@ -1,0 +1,16 @@
+import tkinter as tk
+
+root = tk.Tk()
+root.geometry('300x150')
+
+label_top = tk.Label(root, text='TOP')
+label_bottom = tk.Label(root, text='BOTTOM')
+label_left = tk.Label(root, text='LEFT')
+label_right = tk.Label(root, text='RIGHT')
+
+label_top.pack()
+label_bottom.pack()
+label_left.pack()
+label_right.pack()
+
+root.mainloop()

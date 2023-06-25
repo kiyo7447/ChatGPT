@@ -1,0 +1,7 @@
+def factorization_n(a, b, n):
+  f = 0
+  for i in range(1, n+1):
+    ab = a**(n-i) * b**(i-1)
+    f = f + ab
+
+  return (a - b) * f

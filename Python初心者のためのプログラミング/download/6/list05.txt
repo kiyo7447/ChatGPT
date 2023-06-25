@@ -1,0 +1,37 @@
+import SwiftUI
+struct ContentView: View {
+    //テキストと画像を指定する変数
+    @State private var animal_no = 0
+
+    var body: some View {
+        ZStack {
+            Color.teal
+            .edgesIgnoringSafeArea(.all)
+            VStack {
+                //何吉かを格納する配列
+                let animal_array = ["犬吉","猫吉","豚吉"]
+                    //テキストを配置する
+                    Text(animal_array[animal_no]).font(.system(size: 40))
+                    .foregroundColor(.white)
+                    //画像を配置する
+                    Image(animal_array[animal_no])
+                        .resizable()
+                        .frame(width: 200, height: 200)
+                //ボタンを配置する
+                Button(action: {
+                    //ボタンが押されたときの処理
+                    //0 ～2の乱数を生成する
+                    animal_no = Int.random(in: 0..<animal_array.count)
+                },label: {
+                    //ボタンのテキスト
+                    Text("おみくじを引く").font(.system(size: 40))
+                    .foregroundColor(.white)
+                }).overlay(
+                    //ボタンの枠
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.white, lineWidth: 2)
+                )
+            }
+        }
+    }
+}

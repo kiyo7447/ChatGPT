@@ -1,0 +1,193 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+import sqlite3
+
+books_list = []
+in_entry = []   # 登録情報入力用のEntry
+sub_win = None
+s = ('ISBN', 'タイトル', '著者', '出版社', '発売日',
+     '価格（円）', '画像ファイル')
+
+# 書籍情報をデータベースから取得する関数
+def get_books():
+  conn = sqlite3.connect('collection.db')
+  cur = conn.cursor()
+  sql = 'SELECT * FROM books'
+  cur.execute(sql)
+  books_list = cur.fetchall()
+  conn.close()
+  return books_list
+
+# 一覧の書籍を選択すると呼び出される関数
+def view_select(event):
+  global img
+  global d_frame
+  slct_items = list_view.selection()
+  s = ('ISBN', 'タイトル', '著者', '出版社', '発売日',
+       '価格（円）')
+  for i in range(len(s)):
+    item_view.item(i, values=(s[i],
+      books_list[int(slct_items[0])][i+1]))
+  try:
+    img  = \
+      tk.PhotoImage(file=books_list[int(slct_items[0])][7])
+  except tk.TclError:
+    img = ''
+  panel = tk.Label(d_frame, image=img)
+  panel.grid(row=0, column=1)
+    
+# 登録ボタンをクリックすると呼び出される関数
+def register():
+  global sub_win
+  global in_entry
+  conn = sqlite3.connect('collection.db')
+  cur = conn.cursor()
+  sql = """INSERT INTO books(isbn, 
+                             title,
+                             author, 
+                             publisher, 
+                             release, 
+                             price, 
+                             image) 
+                             VALUES(?, ?, ?, ?, ?, ?, ?)"""
+  ele = []
+  for i in range(len(in_entry)):
+    ele.append(in_entry[i].get())
+  cur.execute(sql, ele)
+  conn.commit()
+  conn.close()
+  messagebox.showinfo('メッセージ', '新規登録しました。')
+  sub_win.destroy()
+  disp()
+
+# 新規登録メニューがクリックされると呼び出される関数
+def save():
+  global sub_win
+  global in_entry
+  
+  # 書籍情報入力用ウインドウの作成
+  sub_win = tk.Toplevel()
+  sub_win.geometry("250x250")
+  in_label = []
+  in_entry.clear()
+  for i in range(len(s)):
+    in_label.append(tk.Label(sub_win, text=s[i]))
+    in_entry.append(tk.Entry(sub_win, width=20))
+  register_button = tk.Button(sub_win, text='登録',
+                              command=register)
+  for i in range(3):
+    sub_win.columnconfigure(i, weight=1)
+  for i in range(9):
+    sub_win.rowconfigure(i, weight=1)
+  for i in range(7):
+    in_label[i].grid(column=0, row=i)
+    in_entry[i].grid(column=1, row=i, columnspan=2)
+  register_button.grid(column=1, row=8, rowspan=2, 
+                       sticky=tk.N)
+
+# 削除メニューがクリックされると呼び出される関数
+def delete():
+  conn = sqlite3.connect('collection.db')
+  cur = conn.cursor()
+  sql = 'DELETE FROM books WHERE id = ?'
+  slct_items = list_view.selection()
+  cur.execute(sql, (books_list[int(slct_items[0])][0],))
+  conn.commit()
+  conn.close()
+  messagebox.showinfo('メッセージ',
+                      'データを削除しました。')
+  disp()
+
+# ウインドウの作成
+root = tk.Tk()
+root.geometry('400x300')
+root.title('蔵書管理アプリ')
+root.resizable(0, 0)
+root.grid_rowconfigure(0, weight=1)
+root.grid_rowconfigure(1, weight=1)
+root.grid_columnconfigure(0, weight=1)
+
+# メニューバーを作成
+menubar = tk.Menu() 
+root.config(menu=menubar) 
+# 操作メニューを作成 
+menu_command = tk.Menu(menubar, tearoff=0) 
+menubar.add_cascade(label='操作', menu=menu_command) 
+# 操作メニューに「新規登録」「削除」メニューを追加する
+menu_command.add_command(label='新規登録', command=save) 
+menu_command.add_separator()
+menu_command.add_command(label='削除', command=delete)
+
+# 一覧用のフレーム
+c_frame = tk.Frame(root)
+column = ('Title', 'Author', 'Publisher')
+
+# Treeviewの作成
+list_view = ttk.Treeview(c_frame,columns=column,height=5)
+list_view.bind('<<TreeviewSelect>>', view_select)
+
+# 表の見出し
+list_view.heading('#0', text='')
+list_view.heading('Title',text='タイトル',anchor='center')
+list_view.heading('Author', text='著者', anchor='center')
+list_view.heading('Publisher',
+                  text='出版社', anchor='center')
+
+# 列の設定
+list_view.column('#0', width=0, stretch='no')
+list_view.column('Title', anchor='w', width=200)
+list_view.column('Author', anchor='w', width=80)
+list_view.column('Publisher', anchor='w', width=80)
+
+# 一覧にデータを追加
+def disp():
+  list_view.delete(*list_view.get_children()) # 初期化
+  global books_list
+  books_list = get_books()
+  for i in range(len(books_list)):
+    list_view.insert(parent='', index='end', iid=i ,
+    values = (books_list[i][2], books_list[i][3], 
+              books_list[i][4]))
+  list_view.grid(row=0, column=0, sticky=tk.NSEW)
+  list_view.selection_set(i) # 最後のアイテムを選択
+  list_view.see(i) # 最後のアイテムに移動
+  # スクロールバーの作成
+  ybar = tk.Scrollbar(c_frame, orient=tk.VERTICAL,
+                      width=16, command=list_view.yview)
+  list_view.configure(yscrollcommand=ybar.set)
+  ybar.grid(row=0, column=1, sticky=tk.NSEW)
+
+# 一覧の作成
+disp()
+
+# 詳細部分の作成
+d_frame = tk.Frame(root)
+d_frame.grid_rowconfigure(0, weight=1)
+d_frame.grid_columnconfigure(0, weight=1)
+d_frame.grid_columnconfigure(1, weight=1)
+column = ('Item', 'Contents')
+item_view = ttk.Treeview(d_frame, show='tree', 
+                         columns=column, height = 6)
+item_view.column('#0', width=0, stretch='no')
+item_view.column('Item', anchor='w', width=80)
+item_view.column('Contents', anchor='w', width=140)
+
+# 詳細の表示
+slct_items = list_view.selection()
+for i in range(len(s)):
+  item_view.insert(parent='', index='end', iid=i,
+                   values=(s[i], 
+                   books_list[int(slct_items[0])][i+1]))
+item_view.grid(row=0, column=0)
+try:
+  img = \
+    tk.PhotoImage(file=books_list[int(slct_items[0])][7])
+except tk.TclError:
+  img = ''
+panel = tk.Label(d_frame, image=img)
+panel.grid(row=0, column=1, sticky=tk.NSEW)
+c_frame.grid(row=0, column=0)
+d_frame.grid(row=1, column=0,sticky=tk.NSEW)
+
+root.mainloop()

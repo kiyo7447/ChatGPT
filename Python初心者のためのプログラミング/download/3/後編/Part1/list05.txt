@@ -1,0 +1,10 @@
+import sqlite3
+
+conn = sqlite3.connect('sample.db')
+cur = conn.cursor()
+
+# SELECT文で全データを抽出して表示
+for row in cur.execute("SELECT * FROM personal"):
+  print(row)
+
+conn.close()

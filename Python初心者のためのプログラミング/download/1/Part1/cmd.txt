@@ -1,0 +1,4 @@
+https://www.anaconda.com/products/distribution
+
+print('Python‚ð‚Í‚¶‚ß‚æ‚¤')
+

@@ -1,0 +1,2 @@
+member = {'name': 'ç‚ñ{ó¥în', 'age': 28, 'gender': 'male'}
+print(member['name'])

@@ -1,0 +1,2 @@
+        # start関数の呼び出し
+        self.start()

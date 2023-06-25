@@ -1,0 +1,9 @@
+        # ゴールオブジェクトの設定
+        self.goal = self.loader.loadModel("models/misc/rgbCube")
+        self.goal.reparentTo(self.render)
+        self.goal.setScale(0.1, 0.1, 0.1)
+        self.goal.setPos(4, 4, -0.5)
+        c = CollisionNode('goalCol')
+        c.addSolid(CollisionBox(Point3(0,0,0),3,3,3))
+        c.setIntoCollideMask(BitMask32.bit(0))
+        goal_c = self.goal.attachNewNode(c)

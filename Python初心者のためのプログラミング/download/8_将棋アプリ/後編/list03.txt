@@ -1,0 +1,69 @@
+# 簡易チャット
+import tkinter
+import socket
+import threading
+
+PORTNUM = 8000   # ポート番号
+
+# タイマー処理（約1秒周期）
+def timerctrl():
+  # UDP受信
+  recvdata, fromdata = sock.recvfrom(16)
+  # 受信データを変換
+  recvtext = str(recvdata, 'utf-8')
+  # データを受信した場合 
+  if recvtext != '':
+    # 送信元IPアドレス          
+    ipaddr.set(fromdata[0])
+    # 受信データを表示
+    lab.configure(text=recvtext)     
+
+  # タイマーを作成
+  timer = threading.Timer(1, timerctrl)   
+  timer.start()   # タイマーを開始
+
+# ボタンを押した時に実行する関数
+def button_click(event):
+  addr = ipaddr.get()   # 送信先IPアドレス
+  data = txdata.get()   # 送信データ
+  # UDP送信
+  sock.sendto(bytes(data, 'utf-8'),
+              (addr, PORTNUM))  
+
+root = tkinter.Tk()   # ウインドウを作成
+
+# ウィジェット変数
+ipaddr = tkinter.StringVar()   
+ipaddr.set('192.168.x.x')   # IPアドレスを格納
+# エントリーを作成
+ent1 = tkinter.Entry(root, textvariable=ipaddr)
+ent1.place(x=10, y=10, width=120, height=20)
+
+# ウィジェット変数
+txdata = tkinter.StringVar()   
+txdata.set('send data')   # 送信データを格納
+# エントリーを作成
+ent2 = tkinter.Entry(root, textvariable=txdata)
+ent2.place(x=10, y=60, width=170, height=20)
+
+# ボタンを作成
+btn = tkinter.Button(root, text='送信')   
+btn.place(x=10, y=85, width=170, height=30)
+# ボタンを押した時に実行する関数を設定
+btn.bind("<Button-1>", button_click)
+
+# ラベルを作成
+lab = tkinter.Label(root, text='receive data')
+lab.place(x=10, y=150, width=160, height=20)
+
+# ネットワークを初期化
+sock = socket.socket(socket.AF_INET,
+                     socket.SOCK_DGRAM)
+sock.bind(('', PORTNUM))
+
+# スレッドを作成
+thread = threading.Thread(target=timerctrl)
+thread.daemon = True
+thread.start()   # スレッドを開始
+
+root.mainloop()

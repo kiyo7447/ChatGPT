@@ -1,0 +1,16 @@
+import sqlite3 
+
+conn = sqlite3.connect('sample.db')
+cur = conn.cursor()
+
+# 身長の低い順にデータをソートする
+for row in cur.execute("SELECT * FROM personal ORDER BY height"):
+  print(row)
+print()
+
+# 身長の高い順にデータをソートする
+for row in cur.execute("SELECT * FROM personal ORDER BY height DESC"):
+  print(row)
+print()
+
+conn.close()

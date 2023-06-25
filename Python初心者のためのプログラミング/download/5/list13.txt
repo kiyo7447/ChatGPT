@@ -1,0 +1,5 @@
+        # ボールの初期位置の設定
+        startPos = self.maze.find("**/start").getPos()
+        self.ballRoot.setPos(startPos)
+        self.ballV = LVector3(0, 0, 0)
+        self.accelV = LVector3(0, 0, 0)

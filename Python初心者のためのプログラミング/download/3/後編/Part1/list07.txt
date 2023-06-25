@@ -1,0 +1,16 @@
+import sqlite3 
+
+conn = sqlite3.connect('sample.db')
+cur = conn.cursor()
+
+# heightが170から180の範囲に含まれているデータを抽出
+for row in cur.execute("SELECT * FROM personal WHERE height BETWEEN 170 AND 180"):
+  print(row)
+print() 
+
+# heightが160、170、180のどれかと等しいデータを抽出
+for row in cur.execute("SELECT * FROM personal WHERE height IN(160, 170, 180)"):
+  print(row)
+print()
+
+conn.close()

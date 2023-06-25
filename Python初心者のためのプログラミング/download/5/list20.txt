@@ -1,0 +1,6 @@
+    # winGame関数の定義
+    def winGame(self, entry):
+        self.title.setText("ゴール！！")
+        toPos = entry.getInteriorPoint(render)
+        self.ballRoot.hide()
+        taskMgr.remove('rollTask')

@@ -1,0 +1,6 @@
+num = 200
+
+if num >= 100:
+    print('‡Ši')
+else:
+    print('•s‡Ši')

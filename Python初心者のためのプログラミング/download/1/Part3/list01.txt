@@ -1,0 +1,6 @@
+year = input('年：')
+month = input('月：')
+
+fname = '請求書' + 'C運輸' + '様' + year \
+    + '年' + month + '月' + '(下半期)' + '.xlsx'
+print(fname)

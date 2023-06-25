@@ -1,0 +1,16 @@
+    # loseGame関数の定義
+    def loseGame(self, entry):
+        toPos = entry.getInteriorPoint(render)
+        taskMgr.remove('rollTask')
+
+        # ボールを穴に落とした後最初の位置に移動させて再度スタート
+        Sequence(
+            Parallel(
+            LerpFunc(self.ballRoot.setX, fromData=self.ballRoot.getX(),
+                     toData=toPos.getX(), duration=.1),
+            LerpFunc(self.ballRoot.setY, fromData=self.ballRoot.getY(),
+                     toData=toPos.getY(), duration=.1),
+            LerpFunc(self.ballRoot.setZ, fromData=self.ballRoot.getZ(),
+                     toData=self.ballRoot.getZ() - .9, duration=.2)),
+            Wait(1),
+            Func(self.start)).start()

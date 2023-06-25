@@ -1,0 +1,16 @@
+        # 迷路オブジェクトの設定
+        self.maze = loader.loadModel("models/maze")
+        self.maze.reparentTo(render)
+        # 迷路の壁の衝突検出用マスク
+        self.walls = self.maze.find("**/wall_collide")
+        self.walls.node().setIntoCollideMask(BitMask32.bit(0))
+        # 迷路の地面の衝突検出用マスク
+        self.mazeGround = self.maze.find("**/ground_collide")
+        self.mazeGround.node().setIntoCollideMask(BitMask32.bit(1))
+        # 迷路の穴の衝突検出用マスク
+        self.loseTriggers = []
+        for i in range(6):
+            trigger = self.maze.find("**/hole_collide" + str(i))
+            trigger.node().setIntoCollideMask(BitMask32.bit(0))
+            trigger.node().setName("loseTrigger")
+            self.loseTriggers.append(trigger)

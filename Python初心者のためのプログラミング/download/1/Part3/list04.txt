@@ -1,0 +1,18 @@
+import shutil
+
+year = input('年：')
+month = input('月：')
+
+if (int(month) <= 6):
+    half = '(上半期)'
+else:
+    half = '(下半期)'
+
+path_src = 'template\\請求書ひな形.xlsx'
+clients = ['A建設', 'B電機', 'C運輸', 'Dフーズ']
+
+for client in clients:
+    fname = '請求書' + client + '様' + year \
+        + '年' + month + '月' + half + '.xlsx'
+
+    shutil.copy(path_src, 'invoice\\' + fname)

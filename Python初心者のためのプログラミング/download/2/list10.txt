@@ -1,0 +1,9 @@
+import os
+import numpy
+from PIL import Image
+from google.colab import files
+for file in files.upload():
+    image = Image.open(file).convert('L').resize((28, 28))
+    input = numpy.array(image).reshape(-1, 784)/255
+    print(file, '', model.predict(input).argmax())
+    os.remove(file)

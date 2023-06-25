@@ -1,0 +1,43 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+
+def view_select(event):
+  slct_items = list_view.selection()
+  messagebox.showinfo('メッセージ', slct_items[0])
+
+# ウインドウの作成
+root = tk.Tk()
+root.geometry('400x150')
+root.title('Treeviewのテスト')
+root.resizable(0, 0)
+
+column = ('Title', 'Author', 'Publisher')
+
+# Treeviewの作成
+list_view = ttk.Treeview(root, columns=column, height=5)
+list_view.bind('<<TreeviewSelect>>', view_select)
+
+# 表の見出し
+list_view.heading('#0', text='')
+list_view.heading('Title', text='タイトル', anchor='center')
+list_view.heading('Author', text='著者', anchor='center')
+list_view.heading('Publisher', text='出版社', anchor='center')
+
+# 列の設定
+list_view.column('#0', width=0, stretch='no')
+list_view.column('Title', anchor='w', width=200)
+list_view.column('Author', anchor='w', width=80)
+list_view.column('Publisher', anchor='w', width=80)
+
+# Treeviewにデータを追加
+def disp():
+  for i in range(5):
+    list_view.insert(parent='', index='end', iid=i,
+    values = (str(i), str(i), str(i)))
+
+disp()
+
+list_view.pack()
+
+root.mainloop()

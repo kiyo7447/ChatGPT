@@ -1,0 +1,2 @@
+# 衝突検出マスク
+from panda3d.core import BitMask32

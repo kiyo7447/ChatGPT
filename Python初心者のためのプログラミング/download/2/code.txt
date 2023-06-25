@@ -1,0 +1,56 @@
+＃＃Part 2
+
+python -V
+
+import sys
+print(sys.version)
+
+
+
+
+＃＃Part 3
+
+pip list
+
+python -m pip install --upgrade pip
+
+pip install pillow
+
+pip install -U pillow
+
+pip uninstall -y pillow
+
+python
+
+image.png
+
+image2.png
+
+conda list
+
+conda install -y openpyxl
+
+conda remove -y openpyxl
+
+table.xlsx
+
+conda install -y pysoundfile
+
+conda install -y -c conda-forge pysoundfile
+
+sound.wav
+
+!pip list
+
+!pip install mecab-python3 unidic-lite
+
+
+
+
+＃＃Part 4
+
+python -m venv C:¥Users¥＜ユーザー名＞¥py1
+
+C:¥Users¥＜ユーザー名＞¥py1¥Scripts¥activate
+
+C:¥Users¥＜ユーザー名＞¥py1¥Scripts¥deactivate

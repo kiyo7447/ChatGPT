@@ -1,0 +1,19 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# ウインドウ（トップレベルTkウィジェット）を生成
+root = tk.Tk()
+root.geometry('300x180')
+root.title('TextとScrollbarのテスト')
+
+# Textウィジェットの生成と配置
+text = tk.Text(root, width=38, height=12)
+text.grid(row=0, column=0)
+
+# 垂直方向のScrollbarウィジェットの生成と配置
+scroll_v = tk.Scrollbar(root, orient=tk.VERTICAL, command=text.yview)
+scroll_v.grid(row=0, column=1, sticky=tk.N+tk.S)
+text["yscrollcommand"] = scroll_v.set
+
+root.mainloop()
+

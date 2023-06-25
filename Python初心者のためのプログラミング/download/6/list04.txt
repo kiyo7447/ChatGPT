@@ -1,0 +1,28 @@
+import SwiftUI
+struct ContentView: View {
+
+    var body: some View {
+        ZStack {
+        Color.teal
+        .edgesIgnoringSafeArea(.all)
+            VStack {
+            //テキストを配置する
+            Text("犬吉").font(.system(size: 40)).foregroundColor(.white)
+            //画像を配置する
+            Image("犬吉").resizable().frame(width: 200, height: 200)
+            //ボタンを配置する
+            Button(action: {
+                //ボタンが押されたときの処理
+                print("ボタンが押されたよ")
+            },label: {
+            //ボタンのテキスト
+                Text("おみくじを引く").font(.system(size: 40)).foregroundColor(.white)
+            }).overlay(
+                //ボタンの枠
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.white, lineWidth: 2)
+            )
+            }
+        }
+    }
+}

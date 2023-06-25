@@ -1,0 +1,39 @@
+import SwiftUI
+
+struct ImgPick: UIViewControllerRepresentable {
+    var source: UIImagePickerController.SourceType = .photoLibrary
+    @Binding var selectedImg: UIImage?
+    @Environment(¥.presentationMode) private var presentationMode
+
+    //ViewControllerを返すメソッドを実装する
+    func makeUIViewController(context: UIViewControllerRepresentableContext<ImgPick>)-> UIImagePickerController {
+
+        let imgPick = UIImagePickerController()
+        imgPick.allowsEditing = false
+        imgPick.sourceType = source
+        imgPick.delegate = context.coordinator
+
+    return imgPick
+    }
+    //Viewが更新された場合に必要な処理を実装する
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context:UIViewControllerRepresentableContext<ImgPick>) {
+    }
+
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(self)
+    }
+    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        var parent: ImgPick
+        init(_ parent: ImgPick) {
+            self.parent = parent
+        }
+    //ユーザーが写真撮影したり、画像を選択したら、画像を変数に保存する。
+    func imagePickerController(_ pick: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let img = info[.originalImage] as? UIImage {
+            parent.selectedImg = img
+            }
+            //画像を選択したらフォトライブラリを閉じる
+            parent.presentationMode.wrappedValue.dismiss()
+        }
+    }
+}

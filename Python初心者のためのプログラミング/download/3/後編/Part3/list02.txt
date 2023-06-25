@@ -1,0 +1,26 @@
+import tkinter as tk
+from tkinter import messagebox
+
+def save():
+  messagebox.showinfo('メッセージ', 'save')
+
+def delete():
+  messagebox.showinfo('メッセージ', 'delete')
+
+# ウインドウの作成
+root = tk.Tk()
+root.geometry('300x150')
+root.title('Menuのテスト')
+
+# メニューバーを作成
+menubar = tk.Menu() 
+root.config(menu=menubar) 
+# 操作メニューを作成 
+menu_command = tk.Menu(menubar, tearoff=0) 
+menubar.add_cascade(label='操作', menu=menu_command) 
+# 操作メニューに「新規登録」「削除」メニューを追加する
+menu_command.add_command(label='新規登録', command=save) 
+menu_command.add_separator()
+menu_command.add_command(label='削除', command=delete)
+
+root.mainloop()

@@ -1,0 +1,10 @@
+import sympy
+
+x = sympy.symbols('x')
+
+y = x**2 + 2 * x - 3
+y_line = -x + 1
+
+f = y_line - y
+
+print(sympy.integrate(f, (x, -4, 1)))

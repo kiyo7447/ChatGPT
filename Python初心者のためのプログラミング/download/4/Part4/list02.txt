@@ -1,0 +1,155 @@
+// jumping game for MegaDrive(main.c)
+#include <genesis.h>
+#include "sprite.h"
+
+typedef struct stchr {
+  s8 id;  // ID
+  s16 x;  // x
+  s16 y;  // y
+  s16 dy; // delta y
+} STCHR;
+
+#define SPMAX 30
+#define OUTSIDE -30
+
+Sprite* sprites[SPMAX]; // スプライト情報
+STCHR chrdata[SPMAX];   // キャラクター情報
+u16 loopcnt, score;
+char tmpstr[8];
+
+// ---- キャラクター追加
+void addobj(s16 nx, s16 ny, u16 nid) {
+  STCHR *ptr;
+  u16 i;
+  ptr = &chrdata[0];
+  for (i=0; i<SPMAX; i++, ptr++) {
+    if (ptr->id >= 0) continue;
+    ptr->x = nx;
+    ptr->y = ny;
+    ptr->dy = 0;
+    ptr->id = nid;  // ID number
+    SPR_setAnim(sprites[i], nid);
+    break;
+  }
+}
+
+// ---- 衝突判定
+s16 hitcheck(STCHR *my) {
+  u16 i;
+  STCHR *target;
+  s16 ret = -1;
+  target = &chrdata[0];
+  for (i=0; i<SPMAX; i++, target++) {
+    if ((target->id < 0)||(target->id == my->id)) {
+      continue;
+    }
+    if ((abs(my->y - target->y) < 20) &&
+        (abs(my->x - target->x) < 20)) {
+      ret = i;
+      break;
+    }
+  }
+  return(ret);
+}
+
+// ---- プレイヤー
+void player(STCHR *ptr){
+  u16 button;
+  s16 hit;
+  if (JOY_getPortType(PORT_1) == PORT_TYPE_UKNOWN) {
+    return;
+  }
+  // ゲームパッド1入力
+  button = JOY_readJoypad(JOY_1);  
+  if (button & BUTTON_LEFT ) ptr->x -= 2;
+  if (button & BUTTON_RIGHT) ptr->x += 2;
+  if (ptr->x < 0) ptr->x = 0;
+  if (ptr->x > 312) ptr->x = 312;
+  if (ptr->y >= 144) {   // 地上にいる
+    ptr->y = 144;
+    ptr->dy = 0;
+    if (button & (BUTTON_A+BUTTON_B+BUTTON_C)) {
+      ptr->dy = -16;
+    }
+  } else {
+    ptr->dy++;       // ジャンプ中
+  }
+  ptr->y += ptr->dy;
+  hit = hitcheck(ptr);   // 衝突判定
+  if ((hit >= 0) && (chrdata[hit].id == 1)) {
+    score++;
+    intToStr(score, tmpstr, 5);
+    VDP_drawText(tmpstr, 7, 1); // スコア表示
+    chrdata[hit].x = OUTSIDE;
+  }
+}
+
+// ---- コイン
+void coin(STCHR *ptr) { 
+  ptr->x -= 4;
+}
+
+// ---- メイン処理
+int main() {
+  u16 i, tile;
+  s16 tmpx, tmpy, scrollx;
+
+  SPR_init();  // スプライト初期化
+  SYS_disableInts();
+  PAL_setPalette(PAL0, spdata.palette->data, CPU);
+  for (i=0; i<SPMAX; i++) {
+    sprites[i] = SPR_addSprite(&spdata, OUTSIDE,
+      OUTSIDE, TILE_ATTR(PAL0, 0, 0, 0));
+  }
+  for (tmpy=0; tmpy<28; tmpy++) {
+    for (tmpx=0; tmpx<80; tmpx++) {
+      if (tmpy < 20) {
+        tile = TILE_ATTR_FULL(PAL3, 0, 0, 0, 7 - (tmpy/3));
+      } else {
+        tile = TILE_ATTR_FULL(PAL2, 0, 0, 0, 7 - 
+                              (tmpy - 20) + (tmpx % 2));
+      }
+      // BG描画
+      VDP_setTileMapXY(BG_B, tile, tmpx, tmpy);  
+    }
+  }
+  SYS_enableInts();     // 割込み許可
+  while (1) {
+    for (i=0; i<SPMAX; i++) { // キャラクター初期化
+      chrdata[i].id = -1;
+      SPR_setPosition(sprites[i], OUTSIDE, OUTSIDE);
+    }
+    addobj(320/3, 224/3, 0);     // プレイヤーを追加
+    score = 0;       // スコア初期化
+    VDP_drawText("00000", 7, 1);
+    scrollx = 0;     // スクロールオフセット
+    for (loopcnt=0; loopcnt<600; loopcnt++) {
+      for (i=0; i<SPMAX; i++) {
+        if (chrdata[i].id < 0) continue;
+        switch(chrdata[i].id) {
+        case 0:
+          player(&chrdata[i]);
+          break;
+        case 1:
+          coin(&chrdata[i]);
+          break;
+        }
+        tmpx = chrdata[i].x;
+        tmpy = chrdata[i].y;
+        SPR_setPosition(sprites[i], tmpx - 16, tmpy - 16);
+        if ((tmpx < -31) || (tmpx > 320) || 
+            (tmpy < -31) || (tmpy > 224)) {
+          chrdata[i].id = -1;
+        }
+      }
+      VDP_setHorizontalScroll(BG_B, scrollx);
+      scrollx = (scrollx - 1) % 512;
+      if ((scrollx % 30) == 0) {
+        addobj(320, (random() % 144), 1);  // コイン追加
+      }
+      SPR_update();           // スプライトの更新
+      SYS_doVBlankProcess();  // Vブランクの発生を待つ
+    }
+  }
+  return(0);
+}

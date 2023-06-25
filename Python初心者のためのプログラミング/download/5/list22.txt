@@ -1,0 +1,14 @@
+        # ライトの設定
+        ambientLight = AmbientLight("ambientLight")
+        ambientLight.setColor((.55, .55, .55, 1))
+        directionalLight = DirectionalLight("directionalLight")
+        directionalLight.setDirection(LVector3(0, 0, -1))
+        directionalLight.setColor((0.375, 0.375, 0.375, 1))
+        directionalLight.setSpecularColor((1, 1, 1, 1))
+        self.ballRoot.setLight(render.attachNewNode(ambientLight))
+        self.ballRoot.setLight(render.attachNewNode(directionalLight))
+        # 光沢のある素材の設定
+        m = Material()
+        m.setSpecular((1, 1, 1, 1))
+        m.setShininess(96)
+        self.ball.setMaterial(m, 1)

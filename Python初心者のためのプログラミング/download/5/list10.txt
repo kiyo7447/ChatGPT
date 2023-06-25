@@ -1,0 +1,17 @@
+    # rollTask関数の定義
+    def rollTask(self, task):
+        dt = globalClock.getDt()
+        if dt > .2:
+            return task.cont
+
+    # ボールが衝突したときの処理の分岐
+    
+    # ボールの速度や向きの計算
+    
+    # 迷路の傾きのマウス操作
+    if base.mouseWatcherNode.hasMouse():
+        mpos = base.mouseWatcherNode.getMouse()
+        self.maze.setP(mpos.getY() * -10)
+        self.maze.setR(mpos.getX() * 10)
+    
+    return task.cont

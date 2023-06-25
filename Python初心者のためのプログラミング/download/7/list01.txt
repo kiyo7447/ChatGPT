@@ -1,0 +1,16 @@
+def ag_mean_2_test(a, b):
+  print("相加平均：", arithmetic_mean := (a + b) / 2)
+  print("相乗平均：", geometric_mean := (a * b)**(1/2))
+
+  return arithmetic_mean >= geometric_mean
+
+def ag_mean_n_test(*a):
+  ta, tg = a[0], a[0]
+  for n in a[1:]:
+    ta = ta + n
+    tg = tg * n
+
+  print("相加平均：", arithmetic_mean := ta / len(a))
+  print("相乗平均：", geometric_mean := tg**(1/len(a)))
+
+  return arithmetic_mean >= geometric_mean

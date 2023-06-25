@@ -1,0 +1,4 @@
+# インターバル
+from direct.interval.MetaInterval import Sequence, Parallel
+from direct.interval.LerpInterval import LerpFunc
+from direct.interval.FunctionInterval import Func, Wait
